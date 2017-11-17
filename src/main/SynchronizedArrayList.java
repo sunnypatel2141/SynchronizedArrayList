@@ -1,3 +1,4 @@
+package main;
 public class SynchronizedArrayList<E>
 {
 	private Object[] array;
@@ -43,6 +44,16 @@ public class SynchronizedArrayList<E>
 		return to;
 	}
 	
+	@SuppressWarnings("unchecked")
+	public E get(int index) throws IndexOutOfBoundsException 
+	{
+		if (index < 0 || index > size())
+		{
+			throw new IndexOutOfBoundsException("Invalid index.");
+		}
+		return (E) array[index];
+	}
+	
 	public int size()
 	{
 		return array.length;
@@ -52,11 +63,11 @@ public class SynchronizedArrayList<E>
 	{
 		StringBuffer sb = new StringBuffer();
 		sb.append("[");
-		for (int i = 0; i < array.length; i++)
+		for (int i = 0; i < array.length - 1; i++)
 		{
-			sb.append(array[i] + ",");
+			sb.append(array[i] + ", ");
 		}
-		sb.substring(0, sb.length() - 1);
+		sb.append(array[array.length - 1]);
 		sb.append("]");
 		return sb.toString();
 	}
