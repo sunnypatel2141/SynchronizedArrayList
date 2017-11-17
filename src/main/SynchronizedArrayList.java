@@ -19,20 +19,44 @@ public class SynchronizedArrayList<E>
 		array = new Object[num];
 	}
 
-	public void add(E e)
+	public boolean add(E e)
 	{
-		int currSize = size();
-		if (counter > currSize)
+		//counter returned not size
+		int numOfElements = size();
+		int capacity = capacity();
+		if (numOfElements + 1 > capacity)
 		{
-			long validSize = currSize * growMultiplier;
+			long validSize = capacity * growMultiplier;
 			if (validSize < Integer.MAX_VALUE)
 			{
 				Object[] temp = new Object[(int) validSize];
 				array = copyContents(array, temp);
+			} else {
+				return false;
 			}
 		}
 		array[counter] = e;
 		counter++;
+		return true;
+	}
+	
+	public void add(int index, E element) throws IndexOutOfBoundsException
+	{
+		int size = size();
+		if(index < 0 || index > size)
+		{
+			throw new IndexOutOfBoundsException();
+		}
+		if (index > counter)
+		{
+			array[index] = element;
+			return;
+		}
+		for (int i = size - 1; i > index; i--)
+		{
+			array[i] = array[i-1];
+		}
+		array[index] = element;
 	}
 	
 	private Object[] copyContents(Object[] from, Object[] to)
@@ -49,32 +73,39 @@ public class SynchronizedArrayList<E>
 	{
 		if (index < 0 || index > size())
 		{
-			throw new IndexOutOfBoundsException("Invalid index.");
+			String str = "Index: " + index + ", Size: " + size();
+			throw new IndexOutOfBoundsException(str);
 		}
 		return (E) array[index];
 	}
 	
 	public int size()
 	{
+		return counter;
+	}
+	
+	private int capacity()
+	{
 		return array.length;
 	}
 	
 	public String toString()
 	{
+		int length = size();
 		StringBuffer sb = new StringBuffer();
 		sb.append("[");
-		for (int i = 0; i < array.length - 1; i++)
+		for (int i = 0; i < length - 1; i++)
 		{
 			sb.append(array[i] + ", ");
 		}
-		sb.append(array[array.length - 1]);
+		sb.append(array[length - 1]);
 		sb.append("]");
 		return sb.toString();
 	}
 	
 	public static void main(String[] args)
 	{
-		SynchronizedArrayList<Integer> sal = new SynchronizedArrayList<>();
+//		SynchronizedArrayList<Integer> sal = new SynchronizedArrayList<>();
 		
 	}
 }
