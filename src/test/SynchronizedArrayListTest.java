@@ -74,6 +74,7 @@ class SynchronizedArrayListTest
 	@Test
 	void testAddAll()
 	{
+		array = new SynchronizedArrayList<>(10);
 		array.add(0);
 		assertEquals(new Integer(0), array.get(0));
 		
@@ -90,6 +91,20 @@ class SynchronizedArrayListTest
 		}	
 	}
 	
+	@Test
+	void subList()
+	{
+		array = new SynchronizedArrayList<>(10);
+		for (int i = 0; i < 10; i++)
+		{
+			array.add(new Integer(i));
+		}
+		assertThrows(IndexOutOfBoundsException.class, ()->array.subList(-1, 9));
+		assertThrows(IllegalArgumentException.class, ()->array.subList(5, 4));
+		
+		array = array.subList(0, 5);
+		assertThrows(IndexOutOfBoundsException.class, ()-> array.get(6));
+	}
 	
 //	@Test
 //	void testSize()

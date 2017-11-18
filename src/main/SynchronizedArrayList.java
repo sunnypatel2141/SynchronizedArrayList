@@ -92,6 +92,33 @@ public class SynchronizedArrayList<E>
 		return true;
 	}
 	
+	@SuppressWarnings("unchecked")
+	public SynchronizedArrayList<E> subList(int fromIndex, int toIndex) throws IndexOutOfBoundsException, IllegalArgumentException 
+	{
+		if (fromIndex > toIndex)
+		{
+			String str = "Start index: " + fromIndex + ", End index: " + toIndex;
+			throw new IllegalArgumentException(str);
+		}
+		if (fromIndex < 0)
+		{
+			String str = "Start index: " + fromIndex;
+			throw new IndexOutOfBoundsException(str);
+		}
+		if (toIndex > size())
+		{
+			String str = "End index: " + toIndex;
+			throw new IndexOutOfBoundsException(str);
+		}
+		int length = toIndex - fromIndex;
+		SynchronizedArrayList<E> sal = new SynchronizedArrayList<>(length+1);
+		for (int i = fromIndex; i < toIndex; i++)
+		{
+			sal.add((E) array[i]);
+		}
+		return sal;
+	}
+	
 	private Object[] copyContents(Object[] from, Object[] to)
 	{
 		for (int i = 0; i < from.length; i++)
