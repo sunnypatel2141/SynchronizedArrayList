@@ -234,6 +234,29 @@ public class SynchronizedArrayList<E>
 		return it;
 	}
 	
+	public boolean remove(Object o)
+	{
+		int index = -1;
+		for (int i = 0; i < size(); i++)
+		{
+			if (array[i].equals(o))
+			{
+				index = i;
+				break;
+			}
+		}
+		if (index != -1)
+		{
+			for (int i = index; i < size() - 1; i++)
+			{
+				array[i] = array[i+1];
+			}
+			counter--;
+			return true;
+		}
+		return false;
+	}
+	
 	private Object[] copyContents(Object[] from, Object[] to)
 	{
 		for (int i = 0; i < from.length; i++)

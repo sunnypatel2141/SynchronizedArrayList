@@ -149,6 +149,22 @@ class SynchronizedArrayListTest
 			assertEquals(new Integer(index), it.previous());
 		}
 	}
+	
+	@Test
+	void testRemove()
+	{
+		array = new SynchronizedArrayList<Integer>();
+		for (int i = 0; i < 10; i++)
+		{
+			array.add(new Integer(i));
+		}
+		assertEquals("[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]", array.toString());
+		array.remove(new Integer(0));
+		array.remove(new Integer(2));
+		array.remove(new Integer(4));
+		array.remove(new Integer(6));
+		assertEquals("[1, 3, 5, 7, 8, 9]", array.toString());
+	}
 //	@Test
 //	void testSize()
 //	{
