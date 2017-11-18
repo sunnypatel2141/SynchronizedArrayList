@@ -2,6 +2,8 @@ package main;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.ListIterator;
+import java.util.NoSuchElementException;
 
 public class SynchronizedArrayList<E>
 {
@@ -117,6 +119,119 @@ public class SynchronizedArrayList<E>
 			sal.add((E) array[i]);
 		}
 		return sal;
+	}
+	
+	public Iterator<E> iterator()
+	{
+		Iterator<E> it = new Iterator<E>()
+		{
+			int index = 0;
+			@Override
+			public boolean hasNext()
+			{
+				if (index < size())
+				{
+					return true;
+				}
+				return false;
+			}
+
+			@SuppressWarnings("unchecked")
+			@Override
+			public E next()
+			{
+				Object obj = array[index];
+				index++;
+				return (E) obj;
+			}
+		};
+		return it;
+	}
+	
+	public ListIterator<E> listIterator()
+	{
+		ListIterator<E> it = new ListIterator<E>()
+		{
+			int index = 0;
+			@Override
+			public boolean hasNext()
+			{
+				if (index < size())
+				{
+					return true;
+				}
+				return false;
+			}
+
+			@SuppressWarnings("unchecked")
+			@Override
+			public E next() throws NoSuchElementException 
+			{
+				if (index > size())
+				{
+					String str = "Next index: " + index + ", Size: " + size(); 
+					throw new NoSuchElementException(str);
+				}
+				Object obj = array[index];
+				index++;
+				return (E) obj;
+			}
+
+			@Override
+			public boolean hasPrevious()
+			{
+				if (index - 1 > -1)
+				{
+					return true;
+				}
+				return false;
+			}
+
+			@SuppressWarnings("unchecked")
+			@Override
+			public E previous() throws NoSuchElementException 
+			{
+				index--;
+				if (index < 0) 
+				{
+					String str = "Previous index: " + index;
+					throw new NoSuchElementException(str);
+				}
+				Object obj = array[index];
+				return (E) obj;
+			}
+
+			@Override
+			public int nextIndex()
+			{
+				return index;
+			}
+
+			@Override
+			public int previousIndex()
+			{
+				return (index - 1);
+			}
+
+			@Override
+			public void remove()
+			{
+				
+			}
+
+			@Override
+			public void set(E e)
+			{
+				// TODO Auto-generated method stub
+			}
+
+			@Override
+			public void add(E e)
+			{
+				// TODO Auto-generated method stub
+			}
+		};
+		return it;
 	}
 	
 	private Object[] copyContents(Object[] from, Object[] to)

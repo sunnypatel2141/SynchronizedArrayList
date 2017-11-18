@@ -2,6 +2,9 @@ package test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.ListIterator;
+
 import org.junit.jupiter.api.Test;
 
 import main.SynchronizedArrayList;
@@ -106,6 +109,46 @@ class SynchronizedArrayListTest
 		assertThrows(IndexOutOfBoundsException.class, ()-> array.get(6));
 	}
 	
+	@Test
+	void testIterator()
+	{
+		array = new SynchronizedArrayList<Integer>();
+		for (int i = 0; i < 10; i++)
+		{
+			array.add(new Integer(i));
+		}
+		Iterator<Integer> it = array.iterator();
+		int index = 0;
+		while (it.hasNext())
+		{
+			assertEquals(it.next(), new Integer(index));
+			index++;
+		}
+	}
+	
+	@Test
+	void testListIterator()
+	{
+		array = new SynchronizedArrayList<Integer>();
+		for (int i = 0; i < 10; i++)
+		{
+			array.add(new Integer(i));
+		}
+		ListIterator<Integer> it = array.listIterator();
+		int index = 0;
+		while (it.hasNext())
+		{
+			System.out.println(index);
+			assertEquals(new Integer(index), it.next());
+			index++;
+		}
+		
+		while (it.hasPrevious())
+		{
+			index--;
+			assertEquals(new Integer(index), it.previous());
+		}
+	}
 //	@Test
 //	void testSize()
 //	{
