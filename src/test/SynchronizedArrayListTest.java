@@ -1,7 +1,7 @@
 package test;
 import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.Before;
+import java.util.ArrayList;
 import org.junit.jupiter.api.Test;
 
 import main.SynchronizedArrayList;
@@ -29,7 +29,16 @@ class SynchronizedArrayListTest
 	{
 		int count = 10;
 		array = new SynchronizedArrayList<>(count);
-		for (int i = 0; i < count * 2; i++)
+		for (int i = 0; i < count; i++)
+		{
+			array.add(i);
+		}
+		assertEquals(array.size(), 10);
+		
+		array.add(count);
+		assertEquals(array.capacity(), count * 2);
+		
+		for (int i = count + 1; i < count * 2; i++)
 		{
 			array.add(i);
 		}
@@ -50,18 +59,37 @@ class SynchronizedArrayListTest
 			array.add(i);
 		}
 		
-		String str = "[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]";
-		assertEquals(str, array.toString());
-		
 		array.add(0, 100);
 		
-		str = "[100, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9]";
+		assertEquals(new Integer(100), array.get(0));
+		for (int i = 1; i < array.size(); i++)
+		{
+			assertEquals(new Integer(i-1), array.get(i));
+		}
+		
+		String str = "[100, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9]"; 
 		assertEquals(str, array.toString());
-//		for (int i = 0; i < count; i++)
-//		{
-//			assertEquals(array.get(i), new Integer(i));
-//		}
 	}
+	
+	@Test
+	void testAddAll()
+	{
+		array.add(0);
+		assertEquals(new Integer(0), array.get(0));
+		
+		ArrayList<Integer> list = new ArrayList<>();
+		for (int i = 1; i <= 10; i++)
+		{
+			list.add(new Integer(i));
+		}
+		array.addAll(list);
+		
+		for (int i = 0; i < 10; i++)
+		{
+			assertEquals(new Integer(i), array.get(i));
+		}	
+	}
+	
 	
 //	@Test
 //	void testSize()
@@ -74,11 +102,12 @@ class SynchronizedArrayListTest
 	{
 		int count = 10;
 		array = new SynchronizedArrayList<>(count);
-		for (int i = 0; i < count; i++)
+		for (int i = 0; i < count * 2; i++)
 		{
 			array.add(i);
 		}
-		String str = "[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]";
+		assertEquals(array.size(), 20);
+		String str = "[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]";
 		assertEquals(str, array.toString());
 	}
 

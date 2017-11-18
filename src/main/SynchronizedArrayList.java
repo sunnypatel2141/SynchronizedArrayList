@@ -1,4 +1,8 @@
 package main;
+
+import java.util.Collection;
+import java.util.Iterator;
+
 public class SynchronizedArrayList<E>
 {
 	private Object[] array;
@@ -47,16 +51,45 @@ public class SynchronizedArrayList<E>
 		{
 			throw new IndexOutOfBoundsException();
 		}
-		if (index > counter)
+		if (size + 1 > capacity())
 		{
-			array[index] = element;
-			return;
+			long validSize = capacity() * growMultiplier;
+			if (validSize < Integer.MAX_VALUE)
+			{
+				Object[] temp = new Object[(int) validSize];
+				array = copyContents(array, temp);
+			}
 		}
-		for (int i = size - 1; i > index; i--)
+		for (int i = size; i > index; i--)
 		{
 			array[i] = array[i-1];
 		}
 		array[index] = element;
+		counter++;
+	}
+	
+	public boolean addAll(Collection<? extends E> c)
+	{
+		int size = size();
+		int cSize = c.size();
+		while (size + cSize > capacity())
+		{
+			long validSize = capacity() * growMultiplier;
+			if (validSize < Integer.MAX_VALUE)
+			{
+				array = copyContents(array, new Object[(int) validSize]);
+			} else {
+				return false;
+			}
+		}
+		Iterator<? extends E> iterator = c.iterator();
+		while (iterator.hasNext())
+		{
+			array[size] = iterator.next();
+			size++;
+		}
+		counter = size + cSize;
+		return true;
 	}
 	
 	private Object[] copyContents(Object[] from, Object[] to)
@@ -84,7 +117,7 @@ public class SynchronizedArrayList<E>
 		return counter;
 	}
 	
-	private int capacity()
+	public int capacity()
 	{
 		return array.length;
 	}
