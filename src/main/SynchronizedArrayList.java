@@ -257,6 +257,12 @@ public class SynchronizedArrayList<E>
 				array[i] = array[i + 1];
 			}
 			counter--;
+			
+			if (size() * 2 < capacity() && capacity() > 10)
+			{
+				array = trimContents();
+			}
+		
 			return true;
 		}
 		return false;
@@ -276,6 +282,7 @@ public class SynchronizedArrayList<E>
 			String str = "Index: " + index + ", Size: " + size;
 			throw new IndexOutOfBoundsException(str);
 		}
+		
 		@SuppressWarnings("unchecked")
 		E obj = (E) array[index];
 		for (int i = index; i < size; i++)
@@ -283,9 +290,26 @@ public class SynchronizedArrayList<E>
 			array[i] = array[i+1];
 		}
 		counter--;
+		
+		size = size();
+		if (size * 2 < capacity() && capacity() > 10)
+		{
+			array = trimContents();
+		}
 		return obj;
 	}
 	
+	private Object[] trimContents()
+	{
+		int size = size();
+		Object[] newArray = new Object[size+1];
+		for (int i = 0; i < size; i++)
+		{
+			newArray[i] = array[i];
+		}
+		return newArray;
+	}
+
 	private Object[] copyContents(Object[] from, Object[] to)
 	{
 		for (int i = 0; i < from.length; i++)

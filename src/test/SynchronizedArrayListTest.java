@@ -161,11 +161,15 @@ class SynchronizedArrayListTest
 			array.add(new Integer(i));
 		}
 		assertEquals("[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]", array.toString());
+		assertEquals(10, array.capacity());
+		
 		array.remove(new Integer(0));
 		array.remove(new Integer(2));
 		array.remove(new Integer(4));
 		array.remove(new Integer(6));
+		
 		assertEquals("[1, 3, 5, 7, 8, 9]", array.toString());
+		assertEquals(10, array.capacity());
 	}
 
 	@Test
@@ -193,11 +197,23 @@ class SynchronizedArrayListTest
 			array.add(new Integer(i));
 		}
 		assertEquals("[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]", array.toString());
+		assertEquals(20, array.capacity());
 		for (int i = 0; i < 10; i++)
 		{
 			array.remove(new Integer(i));
+			
+			//check when reduction happens
+			if (i == 6)
+			{
+				assertEquals(20, array.capacity());
+			}
+			else if (i == 7)
+			{
+				assertEquals(10, array.capacity());
+			}
 		}
 		assertEquals("[10, 11, 12, 13, 14, 15, 16]", array.toString());
+		assertEquals(10, array.capacity());
 	}
 
 	// @Test
