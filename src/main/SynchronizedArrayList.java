@@ -257,12 +257,12 @@ public class SynchronizedArrayList<E>
 				array[i] = array[i + 1];
 			}
 			counter--;
-			
+
 			if (size() * 2 < capacity() && capacity() > 10)
 			{
 				array = trimContents();
 			}
-		
+
 			return true;
 		}
 		return false;
@@ -273,7 +273,7 @@ public class SynchronizedArrayList<E>
 		array = new Object[10];
 		counter = 0;
 	}
-	
+
 	public E remove(int index) throws IndexOutOfBoundsException
 	{
 		int size = size();
@@ -282,15 +282,15 @@ public class SynchronizedArrayList<E>
 			String str = "Index: " + index + ", Size: " + size;
 			throw new IndexOutOfBoundsException(str);
 		}
-		
+
 		@SuppressWarnings("unchecked")
 		E obj = (E) array[index];
 		for (int i = index; i < size; i++)
 		{
-			array[i] = array[i+1];
+			array[i] = array[i + 1];
 		}
 		counter--;
-		
+
 		size = size();
 		if (size * 2 < capacity() && capacity() > 10)
 		{
@@ -298,11 +298,24 @@ public class SynchronizedArrayList<E>
 		}
 		return obj;
 	}
-	
+
+	@SuppressWarnings("unchecked")
+	public E set(int index, E element) throws IndexOutOfBoundsException
+	{
+		if (index < 0 || index > size())
+		{
+			String str = "Index: " + index + ", Size: " + size();
+			throw new IndexOutOfBoundsException(str);
+		}
+		Object obj = array[index];
+		array[index] = element;
+		return (E) obj;
+	}
+
 	private Object[] trimContents()
 	{
 		int size = size();
-		Object[] newArray = new Object[size+1];
+		Object[] newArray = new Object[size + 1];
 		for (int i = 0; i < size; i++)
 		{
 			newArray[i] = array[i];

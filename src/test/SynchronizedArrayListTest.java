@@ -162,12 +162,12 @@ class SynchronizedArrayListTest
 		}
 		assertEquals("[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]", array.toString());
 		assertEquals(10, array.capacity());
-		
+
 		array.remove(new Integer(0));
 		array.remove(new Integer(2));
 		array.remove(new Integer(4));
 		array.remove(new Integer(6));
-		
+
 		assertEquals("[1, 3, 5, 7, 8, 9]", array.toString());
 		assertEquals(10, array.capacity());
 	}
@@ -187,7 +187,7 @@ class SynchronizedArrayListTest
 		assertEquals(10, array.capacity());
 		assertNotEquals(20, array.capacity());
 	}
-	
+
 	@Test
 	void testRemoveIndex()
 	{
@@ -201,13 +201,12 @@ class SynchronizedArrayListTest
 		for (int i = 0; i < 10; i++)
 		{
 			array.remove(new Integer(i));
-			
-			//check when reduction happens
+
+			// check when reduction happens
 			if (i == 6)
 			{
 				assertEquals(20, array.capacity());
-			}
-			else if (i == 7)
+			} else if (i == 7)
 			{
 				assertEquals(10, array.capacity());
 			}
@@ -216,6 +215,24 @@ class SynchronizedArrayListTest
 		assertEquals(10, array.capacity());
 	}
 
+	@Test
+	void testSet()
+	{
+		array = new SynchronizedArrayList<>();
+		for (int i = 0; i < 10; i++)
+		{
+			array.add(new Integer(i));
+		}
+		assertEquals("[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]", array.toString());
+		for (int i = 0; i < 10; i++)
+		{
+			array.set(i, new Integer(9 - i));
+		}
+		assertEquals("[9, 8, 7, 6, 5, 4, 3, 2, 1, 0]", array.toString());
+		assertThrows(IndexOutOfBoundsException.class, ()->array.set(-1, new Integer(0)));
+		assertThrows(IndexOutOfBoundsException.class, ()->array.set(10, new Integer(0)));
+	}
+	
 	// @Test
 	// void testSize()
 	// {
