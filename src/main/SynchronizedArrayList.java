@@ -25,6 +25,25 @@ public class SynchronizedArrayList<E>
 		array = new Object[num];
 	}
 
+	public SynchronizedArrayList(Collection<? extends E> c) throws NullPointerException 
+	{
+		if (c == null)
+		{
+			String str = "Collection " + c + " is null";
+			throw new NullPointerException(str);
+		}
+		Iterator<? extends E> it = c.iterator();
+		array = new Object[10];
+		int i = 0;
+		
+		while (it.hasNext())
+		{
+			array[i] = it.next();
+			i++;
+			counter++;
+		}
+	}
+
 	public boolean add(E e)
 	{
 		// counter returned not size
@@ -253,7 +272,7 @@ public class SynchronizedArrayList<E>
 
 			if (size() * 2 < capacity() && capacity() > 10)
 			{
-				array = trimContents();
+				array = trimContents(true);
 			}
 
 			return true;
@@ -287,7 +306,7 @@ public class SynchronizedArrayList<E>
 		size = size();
 		if (size * 2 < capacity() && capacity() > 10)
 		{
-			array = trimContents();
+			array = trimContents(true);
 		}
 		return obj;
 	}
@@ -338,10 +357,46 @@ public class SynchronizedArrayList<E>
 		return index;
 	}
 	
-	private Object[] trimContents()
+	public boolean contains(Object o)
+	{
+		int index = indexOf(o);
+		if (index != -1)
+		{
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean isEmpty()
+	{
+		if (size() == 0)
+		{
+			return true;
+		}
+		return false;
+	}
+	
+	public void ensureCapacity(int minCapacity)
+	{
+		if (capacity() < minCapacity)
+		{
+			array = copyContents(array, new Object[minCapacity]);
+		}
+	}
+	
+	public void trimToSize()
+	{
+		array = trimContents(false);
+	}
+	
+	private Object[] trimContents(boolean buffer)
 	{
 		int size = size();
-		Object[] newArray = new Object[size + 1];
+		if (buffer)
+		{
+			size += 1;
+		}
+		Object[] newArray = new Object[size];
 		for (int i = 0; i < size; i++)
 		{
 			newArray[i] = array[i];
@@ -361,7 +416,7 @@ public class SynchronizedArrayList<E>
 	@SuppressWarnings("unchecked")
 	public E get(int index) throws IndexOutOfBoundsException
 	{
-		if (index < 0 || index > size())
+		if (index < 0 || index >= size())
 		{
 			String str = "Index: " + index + ", Size: " + size();
 			throw new IndexOutOfBoundsException(str);

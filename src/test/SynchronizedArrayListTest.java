@@ -28,6 +28,38 @@ class SynchronizedArrayListTest
 		array = new SynchronizedArrayList<>(100);
 		assertEquals(array.size(), 0);
 	}
+	
+	@Test
+	void testSynchronizedArrayListCollection()
+	{
+		ArrayList<Integer> arr = new ArrayList<>();
+		for (int i = 0; i < 5; i++)
+		{
+			arr.add(new Integer(i));
+		}
+		
+		array = new SynchronizedArrayList<>(arr);
+		assertEquals(5, array.size());
+		assertEquals(10, array.capacity());
+	}
+	
+	@Test
+	void testGet()
+	{
+		int count = 10;
+		array = new SynchronizedArrayList<>(count);
+		for (int i = 0; i < count; i++)
+		{
+			array.add(i);
+		}
+		
+		for (int i = 0; i < count; i++)
+		{
+			assertEquals(new Integer(i), array.get(i));
+		}
+		assertThrows(IndexOutOfBoundsException.class, ()->array.get(10));
+	}
+	
 
 	@Test
 	void testAdd()
@@ -263,17 +295,61 @@ class SynchronizedArrayListTest
 		{
 			array.add(new Integer(i%3));
 		}
-//		System.out.println(array.toString());
 		assertEquals(8, array.lastIndexOf(0));
 		assertEquals(7, array.lastIndexOf(2));
 		assertEquals(6, array.lastIndexOf(1));
 	}
 	
-	// @Test
-	// void testSize()
-	// {
-	//
-	// }
+	@Test
+	void testContains()
+	{
+		array = new SynchronizedArrayList<>();
+		for (int i = 0; i < 10; i++)
+		{
+			array.add(new Integer(i));
+		}
+		assertEquals("[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]", array.toString());
+		for (int i = 0; i < 10; i++)
+		{
+			assertTrue(array.contains(new Integer(i)));
+		}
+	}
+	
+	@Test
+	void testIsEmpty()
+	{
+		array = new SynchronizedArrayList<>();
+		for (int i = 0; i < 10; i++)
+		{
+			array.add(new Integer(i));
+		}
+		assertEquals("[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]", array.toString());
+		array.clear();
+		assertTrue(array.isEmpty());
+	}
+	
+	@Test
+	void testEnsureMinCapAndTrim()
+	{
+		array = new SynchronizedArrayList<>();
+		for (int i = 0; i < 5; i++)
+		{
+			array.add(new Integer(i));
+		}
+		assertEquals(5, array.size());
+		
+		assertEquals(10, array.capacity());
+		
+		array.ensureCapacity(20);
+		assertEquals(20, array.capacity());
+		assertEquals("[0, 1, 2, 3, 4]", array.toString());
+		
+		assertThrows(IndexOutOfBoundsException.class, ()->array.get(5));
+		
+		array.trimToSize();
+		assertEquals(5, array.capacity());
+		assertEquals("[0, 1, 2, 3, 4]", array.toString());
+	}
 
 	@Test
 	void testToString()
@@ -288,11 +364,4 @@ class SynchronizedArrayListTest
 		String str = "[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]";
 		assertEquals(str, array.toString());
 	}
-
-	// @Test
-	// void testMain()
-	// {
-	// fail("Not yet implemented");
-	// }
-
 }
