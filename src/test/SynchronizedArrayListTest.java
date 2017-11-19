@@ -1,4 +1,6 @@
 package test;
+
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
@@ -12,7 +14,7 @@ import main.SynchronizedArrayList;
 class SynchronizedArrayListTest
 {
 	private SynchronizedArrayList<Integer> array;
-	
+
 	@Test
 	void testSynchronizedArrayList()
 	{
@@ -37,10 +39,10 @@ class SynchronizedArrayListTest
 			array.add(i);
 		}
 		assertEquals(array.size(), 10);
-		
+
 		array.add(count);
 		assertEquals(array.capacity(), count * 2);
-		
+
 		for (int i = count + 1; i < count * 2; i++)
 		{
 			array.add(i);
@@ -49,7 +51,7 @@ class SynchronizedArrayListTest
 		{
 			assertEquals(array.get(i), new Integer(i));
 		}
-		assertThrows(IndexOutOfBoundsException.class, ()->array.get(count * 2));
+		assertThrows(IndexOutOfBoundsException.class, () -> array.get(count * 2));
 	}
 
 	@Test
@@ -61,39 +63,39 @@ class SynchronizedArrayListTest
 		{
 			array.add(i);
 		}
-		
+
 		array.add(0, 100);
-		
+
 		assertEquals(new Integer(100), array.get(0));
 		for (int i = 1; i < array.size(); i++)
 		{
-			assertEquals(new Integer(i-1), array.get(i));
+			assertEquals(new Integer(i - 1), array.get(i));
 		}
-		
-		String str = "[100, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9]"; 
+
+		String str = "[100, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9]";
 		assertEquals(str, array.toString());
 	}
-	
+
 	@Test
 	void testAddAll()
 	{
 		array = new SynchronizedArrayList<>(10);
 		array.add(0);
 		assertEquals(new Integer(0), array.get(0));
-		
+
 		ArrayList<Integer> list = new ArrayList<>();
 		for (int i = 1; i <= 10; i++)
 		{
 			list.add(new Integer(i));
 		}
 		array.addAll(list);
-		
+
 		for (int i = 0; i < 10; i++)
 		{
 			assertEquals(new Integer(i), array.get(i));
-		}	
+		}
 	}
-	
+
 	@Test
 	void subList()
 	{
@@ -102,13 +104,13 @@ class SynchronizedArrayListTest
 		{
 			array.add(new Integer(i));
 		}
-		assertThrows(IndexOutOfBoundsException.class, ()->array.subList(-1, 9));
-		assertThrows(IllegalArgumentException.class, ()->array.subList(5, 4));
-		
+		assertThrows(IndexOutOfBoundsException.class, () -> array.subList(-1, 9));
+		assertThrows(IllegalArgumentException.class, () -> array.subList(5, 4));
+
 		array = array.subList(0, 5);
-		assertThrows(IndexOutOfBoundsException.class, ()-> array.get(6));
+		assertThrows(IndexOutOfBoundsException.class, () -> array.get(6));
 	}
-	
+
 	@Test
 	void testIterator()
 	{
@@ -125,7 +127,7 @@ class SynchronizedArrayListTest
 			index++;
 		}
 	}
-	
+
 	@Test
 	void testListIterator()
 	{
@@ -142,14 +144,14 @@ class SynchronizedArrayListTest
 			assertEquals(new Integer(index), it.next());
 			index++;
 		}
-		
+
 		while (it.hasPrevious())
 		{
 			index--;
 			assertEquals(new Integer(index), it.previous());
 		}
 	}
-	
+
 	@Test
 	void testRemove()
 	{
@@ -165,11 +167,44 @@ class SynchronizedArrayListTest
 		array.remove(new Integer(6));
 		assertEquals("[1, 3, 5, 7, 8, 9]", array.toString());
 	}
-//	@Test
-//	void testSize()
-//	{
-//		
-//	}
+
+	@Test
+	void testClear()
+	{
+		array = new SynchronizedArrayList<>();
+		for (int i = 0; i < 17; i++)
+		{
+			array.add(new Integer(i));
+		}
+		assertEquals("[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]", array.toString());
+		assertEquals(20, array.capacity());
+		array.clear();
+		assertEquals("[]", array.toString());
+		assertEquals(10, array.capacity());
+		assertNotEquals(20, array.capacity());
+	}
+	
+	@Test
+	void testRemoveIndex()
+	{
+		array = new SynchronizedArrayList<>();
+		for (int i = 0; i < 17; i++)
+		{
+			array.add(new Integer(i));
+		}
+		assertEquals("[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]", array.toString());
+		for (int i = 0; i < 10; i++)
+		{
+			array.remove(new Integer(i));
+		}
+		assertEquals("[10, 11, 12, 13, 14, 15, 16]", array.toString());
+	}
+
+	// @Test
+	// void testSize()
+	// {
+	//
+	// }
 
 	@Test
 	void testToString()
@@ -185,10 +220,10 @@ class SynchronizedArrayListTest
 		assertEquals(str, array.toString());
 	}
 
-//	@Test
-//	void testMain()
-//	{
-//		fail("Not yet implemented");
-//	}
+	// @Test
+	// void testMain()
+	// {
+	// fail("Not yet implemented");
+	// }
 
 }
