@@ -242,14 +242,7 @@ public class SynchronizedArrayList<E>
 	public boolean remove(Object o)
 	{
 		int index = -1;
-		for (int i = 0; i < size(); i++)
-		{
-			if (array[i].equals(o))
-			{
-				index = i;
-				break;
-			}
-		}
+		index = indexOf(o);
 		if (index != -1)
 		{
 			for (int i = index; i < size() - 1; i++)
@@ -311,7 +304,40 @@ public class SynchronizedArrayList<E>
 		array[index] = element;
 		return (E) obj;
 	}
+	
+	public Object clone()
+	{
+		return array.clone();
+	}
 
+	public int indexOf(Object o)
+	{
+		int index = -1;
+		for (int i = 0; i < size(); i++)
+		{
+			if (array[i].equals(o))
+			{
+				index = i;
+				break;
+			}
+		}
+		return index;
+	}
+	
+	public int lastIndexOf(Object o)
+	{
+		int index = -1;
+		for (int i = size() - 1; i > -1; i--)
+		{
+			if (array[i].equals(o))
+			{
+				index = i;
+				break;
+			}
+		}
+		return index;
+	}
+	
 	private Object[] trimContents()
 	{
 		int size = size();

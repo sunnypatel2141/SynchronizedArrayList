@@ -140,7 +140,7 @@ class SynchronizedArrayListTest
 		int index = 0;
 		while (it.hasNext())
 		{
-			System.out.println(index);
+//			System.out.println(index);
 			assertEquals(new Integer(index), it.next());
 			index++;
 		}
@@ -231,6 +231,42 @@ class SynchronizedArrayListTest
 		assertEquals("[9, 8, 7, 6, 5, 4, 3, 2, 1, 0]", array.toString());
 		assertThrows(IndexOutOfBoundsException.class, ()->array.set(-1, new Integer(0)));
 		assertThrows(IndexOutOfBoundsException.class, ()->array.set(10, new Integer(0)));
+	}
+	
+	@Test
+	void testClone()
+	{
+		array = new SynchronizedArrayList<>();
+		assertEquals(false, array == array.clone());
+	}
+	
+	@Test
+	void testIndexOf()
+	{
+		array = new SynchronizedArrayList<>();
+		for (int i = 0; i < 10; i++)
+		{
+			array.add(new Integer(i));
+		}
+		assertEquals("[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]", array.toString());
+		for (int i = 0; i < 10; i++)
+		{
+			assertEquals(i, array.indexOf(new Integer(i)));
+		}
+	}
+	
+	@Test
+	void testLastIndexOf()
+	{
+		array = new SynchronizedArrayList<>();
+		for (int i = 1; i < 10; i++)
+		{
+			array.add(new Integer(i%3));
+		}
+//		System.out.println(array.toString());
+		assertEquals(8, array.lastIndexOf(0));
+		assertEquals(7, array.lastIndexOf(2));
+		assertEquals(6, array.lastIndexOf(1));
 	}
 	
 	// @Test
