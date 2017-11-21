@@ -1,9 +1,12 @@
 package main;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
+
+import javax.swing.table.TableColumn;
 
 public class SynchronizedArrayList<E>
 {
@@ -43,7 +46,120 @@ public class SynchronizedArrayList<E>
 			counter++;
 		}
 	}
+	
+	public void trimToSize()
+	{
+		array = trimContents(false);
+	}
+	
+	public void ensureCapacity(int minCapacity)
+	{
+		if (capacity() < minCapacity)
+		{
+			array = copyContents(array, new Object[minCapacity]);
+		}
+	}
+	
+	public int size()
+	{
+		return counter;
+	}
+	
+	public boolean isEmpty()
+	{
+		if (size() == 0)
+		{
+			return true;
+		}
+		return false;
+	}
 
+	public boolean contains(Object o)
+	{
+		int index = indexOf(o);
+		if (index != -1)
+		{
+			return true;
+		}
+		return false;
+	}
+	
+	public int indexOf(Object o)
+	{
+		int index = -1;
+		for (int i = 0; i < size(); i++)
+		{
+			if (array[i].equals(o))
+			{
+				index = i;
+				break;
+			}
+		}
+		return index;
+	}
+	
+	public int lastIndexOf(Object o)
+	{
+		int index = -1;
+		for (int i = size() - 1; i > -1; i--)
+		{
+			if (array[i].equals(o))
+			{
+				index = i;
+				break;
+			}
+		}
+		return index;
+	}
+	
+	public Object clone()
+	{
+		return array.clone();
+	}
+	
+	public Object[] toArray()
+	{
+		return Arrays.copyOf(array, size());
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <T> T[] toArray(T[] a) throws ArrayStoreException, NullPointerException
+	{
+		int size = size();
+		if (a.length < size)
+		{
+            return (T[]) Arrays.copyOf(array, size, a.getClass());
+		}
+        System.arraycopy(array, 0, a, 0, size);
+        if (a.length > size)
+            a[size] = null;
+        return a;
+	}
+
+	@SuppressWarnings("unchecked")
+	public E get(int index) throws IndexOutOfBoundsException
+	{
+		if (index < 0 || index >= size())
+		{
+			String str = "Index: " + index + ", Size: " + size();
+			throw new IndexOutOfBoundsException(str);
+		}
+		return (E) array[index];
+	}
+	
+	@SuppressWarnings("unchecked")
+	public E set(int index, E element) throws IndexOutOfBoundsException
+	{
+		if (index < 0 || index > size())
+		{
+			String str = "Index: " + index + ", Size: " + size();
+			throw new IndexOutOfBoundsException(str);
+		}
+		Object obj = array[index];
+		array[index] = element;
+		return (E) obj;
+	}
+	
 	public boolean add(E e)
 	{
 		// counter returned not size
@@ -89,9 +205,68 @@ public class SynchronizedArrayList<E>
 		array[index] = element;
 		counter++;
 	}
-
-	public boolean addAll(Collection<? extends E> c)
+	
+	public E remove(int index) throws IndexOutOfBoundsException
 	{
+		int size = size();
+		if (index > size)
+		{
+			String str = "Index: " + index + ", Size: " + size;
+			throw new IndexOutOfBoundsException(str);
+		}
+
+		@SuppressWarnings("unchecked")
+		E obj = (E) array[index];
+		for (int i = index; i < size; i++)
+		{
+			array[i] = array[i + 1];
+		}
+		counter--;
+
+		size = size();
+		if (size * 2 < capacity() && capacity() > 10)
+		{
+			array = trimContents(true);
+		}
+		return obj;
+	}
+	
+	public boolean remove(Object o)
+	{
+		int index = -1;
+		index = indexOf(o);
+		if (index != -1)
+		{
+			for (int i = index; i < size() - 1; i++)
+			{
+				array[i] = array[i + 1];
+			}
+			counter--;
+
+			if (size() * 2 < capacity() && capacity() > 10)
+			{
+				array = trimContents(true);
+			}
+
+			return true;
+		}
+		return false;
+	}
+	
+	public void clear()
+	{
+		array = new Object[10];
+		counter = 0;
+	}
+	
+	public boolean addAll(Collection<? extends E> c) throws NullPointerException
+	{
+		if (c == null)
+		{
+			String str = "Collection " + c + " is null";
+			throw new NullPointerException(str);
+		}
+		
 		int size = size();
 		int cSize = c.size();
 		while (size + cSize > capacity())
@@ -114,63 +289,87 @@ public class SynchronizedArrayList<E>
 		counter = size + cSize;
 		return true;
 	}
-
-	@SuppressWarnings("unchecked")
-	public SynchronizedArrayList<E> subList(int fromIndex, int toIndex)
-			throws IndexOutOfBoundsException, IllegalArgumentException
+	
+	public boolean addAll(int index, Collection<? extends E> c) throws NullPointerException, IndexOutOfBoundsException 
 	{
-		if (fromIndex > toIndex)
+		if (c == null)
 		{
-			String str = "Start index: " + fromIndex + ", End index: " + toIndex;
-			throw new IllegalArgumentException(str);
+			String str = "Collection " + c + " is null";
+			throw new NullPointerException(str);
 		}
-		if (fromIndex < 0)
+		int size = size();
+		
+		if (index < 0 || index > size)
 		{
-			String str = "Start index: " + fromIndex;
+			String str = "Index: " + index + ", Size: " + size;
 			throw new IndexOutOfBoundsException(str);
 		}
-		if (toIndex > size())
+		
+		Object[] tempArr = new Object[size - index];
+		for (int i = index, j = 0; i < size; i++, j++)
 		{
-			String str = "End index: " + toIndex;
-			throw new IndexOutOfBoundsException(str);
+			tempArr[j] = array[i];
+			System.out.println("TempArr: " + j + " = " + tempArr[j]);
 		}
-		int length = toIndex - fromIndex;
-		SynchronizedArrayList<E> sal = new SynchronizedArrayList<>(length + 1);
-		for (int i = fromIndex; i < toIndex; i++)
+		
+		int cSize = c.size();
+		
+		System.out.println("Capacity : " + capacity());
+		
+		while (size() + cSize > capacity())
 		{
-			sal.add((E) array[i]);
-		}
-		return sal;
-	}
-
-	public Iterator<E> iterator()
-	{
-		Iterator<E> it = new Iterator<E>()
-		{
-			int index = 0;
-
-			@Override
-			public boolean hasNext()
+			long validSize = capacity() * growMultiplier;
+			if (validSize < Integer.MAX_VALUE)
 			{
-				if (index < size())
-				{
-					return true;
-				}
+				array = copyContents(array, new Object[(int) validSize]);
+			} else
+			{
 				return false;
 			}
-
-			@SuppressWarnings("unchecked")
-			@Override
-			public E next()
-			{
-				Object obj = array[index];
-				index++;
-				return (E) obj;
-			}
-		};
-		return it;
+		}
+		
+		System.out.println("Capacity : " + capacity());
+		
+		Iterator<? extends E> it = c.iterator();
+		int i = index;
+		
+		while (it.hasNext())
+		{
+			array[i] = it.next();
+			System.out.println("Array: " + i + " = " + array[i]);
+			i++;
+			counter++;
+		}
+		
+		for (int j = 0, k = index + cSize; j < tempArr.length; j++, k++)
+		{
+			array[k] = tempArr[j];
+			System.out.println("Array[k]= " + array[k] + " & tempArr[j] = " + tempArr[j]);
+		}
+//		counter = size;
+		return true;
 	}
-
+	
+	protected void removeRange(int fromIndex, int toIndex)
+	{
+		
+	}
+	
+//	public boolean removeAll(Collection<?> c)
+//	{
+//		
+//	}
+//	
+//	public boolean retainAll(Collection<?> c)
+//	{
+//		
+//	}
+//
+//	public ListIterator<E> listIterator(int index)
+//	{
+//		
+//	}
+	
 	public ListIterator<E> listIterator()
 	{
 		ListIterator<E> it = new ListIterator<E>()
@@ -257,138 +456,63 @@ public class SynchronizedArrayList<E>
 		};
 		return it;
 	}
-
-	public boolean remove(Object o)
+	
+	public Iterator<E> iterator()
 	{
-		int index = -1;
-		index = indexOf(o);
-		if (index != -1)
+		Iterator<E> it = new Iterator<E>()
 		{
-			for (int i = index; i < size() - 1; i++)
+			int index = 0;
+
+			@Override
+			public boolean hasNext()
 			{
-				array[i] = array[i + 1];
+				if (index < size())
+				{
+					return true;
+				}
+				return false;
 			}
-			counter--;
 
-			if (size() * 2 < capacity() && capacity() > 10)
+			@SuppressWarnings("unchecked")
+			@Override
+			public E next()
 			{
-				array = trimContents(true);
+				Object obj = array[index];
+				index++;
+				return (E) obj;
 			}
-
-			return true;
-		}
-		return false;
+		};
+		return it;
 	}
-
-	public void clear()
-	{
-		array = new Object[10];
-		counter = 0;
-	}
-
-	public E remove(int index) throws IndexOutOfBoundsException
-	{
-		int size = size();
-		if (index > size)
-		{
-			String str = "Index: " + index + ", Size: " + size;
-			throw new IndexOutOfBoundsException(str);
-		}
-
-		@SuppressWarnings("unchecked")
-		E obj = (E) array[index];
-		for (int i = index; i < size; i++)
-		{
-			array[i] = array[i + 1];
-		}
-		counter--;
-
-		size = size();
-		if (size * 2 < capacity() && capacity() > 10)
-		{
-			array = trimContents(true);
-		}
-		return obj;
-	}
-
+	
 	@SuppressWarnings("unchecked")
-	public E set(int index, E element) throws IndexOutOfBoundsException
+	public SynchronizedArrayList<E> subList(int fromIndex, int toIndex)
+			throws IndexOutOfBoundsException, IllegalArgumentException
 	{
-		if (index < 0 || index > size())
+		if (fromIndex > toIndex)
 		{
-			String str = "Index: " + index + ", Size: " + size();
+			String str = "Start index: " + fromIndex + ", End index: " + toIndex;
+			throw new IllegalArgumentException(str);
+		}
+		if (fromIndex < 0)
+		{
+			String str = "Start index: " + fromIndex;
 			throw new IndexOutOfBoundsException(str);
 		}
-		Object obj = array[index];
-		array[index] = element;
-		return (E) obj;
-	}
-	
-	public Object clone()
-	{
-		return array.clone();
+		if (toIndex > size())
+		{
+			String str = "End index: " + toIndex;
+			throw new IndexOutOfBoundsException(str);
+		}
+		int length = toIndex - fromIndex;
+		SynchronizedArrayList<E> sal = new SynchronizedArrayList<>(length + 1);
+		for (int i = fromIndex; i < toIndex; i++)
+		{
+			sal.add((E) array[i]);
+		}
+		return sal;
 	}
 
-	public int indexOf(Object o)
-	{
-		int index = -1;
-		for (int i = 0; i < size(); i++)
-		{
-			if (array[i].equals(o))
-			{
-				index = i;
-				break;
-			}
-		}
-		return index;
-	}
-	
-	public int lastIndexOf(Object o)
-	{
-		int index = -1;
-		for (int i = size() - 1; i > -1; i--)
-		{
-			if (array[i].equals(o))
-			{
-				index = i;
-				break;
-			}
-		}
-		return index;
-	}
-	
-	public boolean contains(Object o)
-	{
-		int index = indexOf(o);
-		if (index != -1)
-		{
-			return true;
-		}
-		return false;
-	}
-	
-	public boolean isEmpty()
-	{
-		if (size() == 0)
-		{
-			return true;
-		}
-		return false;
-	}
-	
-	public void ensureCapacity(int minCapacity)
-	{
-		if (capacity() < minCapacity)
-		{
-			array = copyContents(array, new Object[minCapacity]);
-		}
-	}
-	
-	public void trimToSize()
-	{
-		array = trimContents(false);
-	}
-	
 	private Object[] trimContents(boolean buffer)
 	{
 		int size = size();
@@ -413,22 +537,6 @@ public class SynchronizedArrayList<E>
 		return to;
 	}
 
-	@SuppressWarnings("unchecked")
-	public E get(int index) throws IndexOutOfBoundsException
-	{
-		if (index < 0 || index >= size())
-		{
-			String str = "Index: " + index + ", Size: " + size();
-			throw new IndexOutOfBoundsException(str);
-		}
-		return (E) array[index];
-	}
-
-	public int size()
-	{
-		return counter;
-	}
-
 	public int capacity()
 	{
 		return array.length;
@@ -449,11 +557,5 @@ public class SynchronizedArrayList<E>
 		}
 		sb.append("]");
 		return sb.toString();
-	}
-
-	public static void main(String[] args)
-	{
-		// SynchronizedArrayList<Integer> sal = new SynchronizedArrayList<>();
-
 	}
 }

@@ -4,6 +4,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.ListIterator;
 
@@ -128,6 +129,24 @@ class SynchronizedArrayListTest
 		}
 	}
 
+	@Test
+	void testAddAllIndex()
+	{
+		array = new SynchronizedArrayList<>(10);
+		array.add(0);
+		array.add(1);
+		assertEquals("[0, 1]", array.toString());
+
+		ArrayList<Integer> list = new ArrayList<>();
+		for (int i = 2; i <= 10; i++)
+		{
+			list.add(new Integer(i));
+		}
+		array.addAll(0,list);
+
+		assertEquals("[2, 3, 4, 5, 6, 7, 8, 9, 10, 0, 1]", array.toString());
+	}
+	
 	@Test
 	void subList()
 	{
@@ -351,6 +370,19 @@ class SynchronizedArrayListTest
 		assertEquals("[0, 1, 2, 3, 4]", array.toString());
 	}
 
+	@Test
+	void testToArray()
+	{
+		int count = 10;
+		array = new SynchronizedArrayList<>(count);
+		for (int i = 0; i < count; i++)
+		{
+			array.add(i);
+		}
+		Object[] arr = array.toArray();
+		assertEquals("[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]", Arrays.toString(arr));
+	}
+	
 	@Test
 	void testToString()
 	{
