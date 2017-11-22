@@ -309,12 +309,9 @@ public class SynchronizedArrayList<E>
 		for (int i = index, j = 0; i < size; i++, j++)
 		{
 			tempArr[j] = array[i];
-			System.out.println("TempArr: " + j + " = " + tempArr[j]);
 		}
 		
 		int cSize = c.size();
-		
-		System.out.println("Capacity : " + capacity());
 		
 		while (size() + cSize > capacity())
 		{
@@ -328,15 +325,12 @@ public class SynchronizedArrayList<E>
 			}
 		}
 		
-		System.out.println("Capacity : " + capacity());
-		
 		Iterator<? extends E> it = c.iterator();
 		int i = index;
 		
 		while (it.hasNext())
 		{
 			array[i] = it.next();
-			System.out.println("Array: " + i + " = " + array[i]);
 			i++;
 			counter++;
 		}
@@ -344,15 +338,55 @@ public class SynchronizedArrayList<E>
 		for (int j = 0, k = index + cSize; j < tempArr.length; j++, k++)
 		{
 			array[k] = tempArr[j];
-			System.out.println("Array[k]= " + array[k] + " & tempArr[j] = " + tempArr[j]);
 		}
-//		counter = size;
 		return true;
 	}
 	
-	protected void removeRange(int fromIndex, int toIndex)
+	protected void removeRange(int fromIndex, int toIndex) throws IndexOutOfBoundsException
 	{
+		int size = size();
+		if (fromIndex < 0)
+		{
+			String str = "Start index: " + fromIndex;
+			throw new IndexOutOfBoundsException(str);
+		}
+		if (toIndex > size)
+		{
+			String str = "End index: " + toIndex + ", Size: " + size;
+			throw new IndexOutOfBoundsException(str);			
+		}
+		if (fromIndex >= size)
+		{
+			String str = "From Index: " + fromIndex + ", Size: " + size;
+			throw new IndexOutOfBoundsException(str);
+		}
+		if(toIndex < fromIndex)
+		{
+			String str = "End index: " + toIndex + ", From index: " + fromIndex;
+			throw new IndexOutOfBoundsException(str);
+		}
 		
+		Object[] tempArr = new Object[size - toIndex - 1];
+		
+		for (int i = toIndex + 1, j = 0; i < size; i++, j++)
+		{
+			tempArr[j] = array[i];
+		}
+		
+		int range = toIndex - fromIndex + 1;
+		counter -= range;
+		size = size();
+		
+		while (size * 2 < capacity())
+		{
+			int len = array.length;
+			array = copyContents(array, new Object[len]);
+		}
+		
+		for (int i = toIndex + 1, j = 0; j < tempArr.length; j++, i++)
+		{
+			array[i] = tempArr[j];
+		}
 	}
 	
 //	public boolean removeAll(Collection<?> c)

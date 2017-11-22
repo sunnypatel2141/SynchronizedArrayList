@@ -15,6 +15,7 @@ import main.SynchronizedArrayList;
 class SynchronizedArrayListTest
 {
 	private SynchronizedArrayList<Integer> array;
+	private int len = 10;
 
 	@Test
 	void testSynchronizedArrayList()
@@ -47,14 +48,9 @@ class SynchronizedArrayListTest
 	@Test
 	void testGet()
 	{
-		int count = 10;
-		array = new SynchronizedArrayList<>(count);
-		for (int i = 0; i < count; i++)
-		{
-			array.add(i);
-		}
+		array = InstantiateAndPopulate(len);
 		
-		for (int i = 0; i < count; i++)
+		for (int i = 0; i < len; i++)
 		{
 			assertEquals(new Integer(i), array.get(i));
 		}
@@ -65,37 +61,27 @@ class SynchronizedArrayListTest
 	@Test
 	void testAdd()
 	{
-		int count = 10;
-		array = new SynchronizedArrayList<>(count);
-		for (int i = 0; i < count; i++)
+		array = InstantiateAndPopulate(len);
+		assertEquals(array.size(), len);
+
+		array.add(len);
+		assertEquals(array.capacity(), len * 2);
+
+		for (int i = len + 1; i < len * 2; i++)
 		{
 			array.add(i);
 		}
-		assertEquals(array.size(), 10);
-
-		array.add(count);
-		assertEquals(array.capacity(), count * 2);
-
-		for (int i = count + 1; i < count * 2; i++)
-		{
-			array.add(i);
-		}
-		for (int i = 0; i < count * 2; i++)
+		for (int i = 0; i < len * 2; i++)
 		{
 			assertEquals(array.get(i), new Integer(i));
 		}
-		assertThrows(IndexOutOfBoundsException.class, () -> array.get(count * 2));
+		assertThrows(IndexOutOfBoundsException.class, () -> array.get(len * 2));
 	}
 
 	@Test
 	void testAddIndexElement()
 	{
-		int count = 10;
-		array = new SynchronizedArrayList<>(count);
-		for (int i = 0; i < count; i++)
-		{
-			array.add(i);
-		}
+		array = InstantiateAndPopulate(len);
 
 		array.add(0, 100);
 
@@ -112,7 +98,7 @@ class SynchronizedArrayListTest
 	@Test
 	void testAddAll()
 	{
-		array = new SynchronizedArrayList<>(10);
+		array = new SynchronizedArrayList<>(len);
 		array.add(0);
 		assertEquals(new Integer(0), array.get(0));
 
@@ -123,7 +109,7 @@ class SynchronizedArrayListTest
 		}
 		array.addAll(list);
 
-		for (int i = 0; i < 10; i++)
+		for (int i = 0; i < len; i++)
 		{
 			assertEquals(new Integer(i), array.get(i));
 		}
@@ -132,29 +118,47 @@ class SynchronizedArrayListTest
 	@Test
 	void testAddAllIndex()
 	{
-		array = new SynchronizedArrayList<>(10);
-		array.add(0);
-		array.add(1);
-		assertEquals("[0, 1]", array.toString());
-
 		ArrayList<Integer> list = new ArrayList<>();
 		for (int i = 2; i <= 10; i++)
 		{
 			list.add(new Integer(i));
 		}
-		array.addAll(0,list);
 
+		array = new SynchronizedArrayList<>();
+		array.add(0);
+		array.add(1);
+		assertEquals("[0, 1]", array.toString());
+		
+		array.addAll(0,list);
 		assertEquals("[2, 3, 4, 5, 6, 7, 8, 9, 10, 0, 1]", array.toString());
+		assertEquals(11, array.size());
+		
+		array.clear();
+		
+		//add collection - different index
+		array.add(0);
+		array.add(1);
+		array.addAll(1,list);
+		assertEquals("[0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1]", array.toString());
+		
+		//input check
+		array.clear();
+		assertThrows(IndexOutOfBoundsException.class, ()->array.addAll(array.size()+1, list));
+	}
+	
+	@Test
+	void testRemoveRange()
+	{
+		array = InstantiateAndPopulate(len);
+		assertEquals("[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]", array.toString());
+		
 	}
 	
 	@Test
 	void subList()
 	{
-		array = new SynchronizedArrayList<>(10);
-		for (int i = 0; i < 10; i++)
-		{
-			array.add(new Integer(i));
-		}
+		array = InstantiateAndPopulate(len);
+		
 		assertThrows(IndexOutOfBoundsException.class, () -> array.subList(-1, 9));
 		assertThrows(IllegalArgumentException.class, () -> array.subList(5, 4));
 
@@ -165,11 +169,8 @@ class SynchronizedArrayListTest
 	@Test
 	void testIterator()
 	{
-		array = new SynchronizedArrayList<Integer>();
-		for (int i = 0; i < 10; i++)
-		{
-			array.add(new Integer(i));
-		}
+		array = InstantiateAndPopulate(len);
+		
 		Iterator<Integer> it = array.iterator();
 		int index = 0;
 		while (it.hasNext())
@@ -182,11 +183,8 @@ class SynchronizedArrayListTest
 	@Test
 	void testListIterator()
 	{
-		array = new SynchronizedArrayList<Integer>();
-		for (int i = 0; i < 10; i++)
-		{
-			array.add(new Integer(i));
-		}
+		array = InstantiateAndPopulate(len);
+
 		ListIterator<Integer> it = array.listIterator();
 		int index = 0;
 		while (it.hasNext())
@@ -206,11 +204,8 @@ class SynchronizedArrayListTest
 	@Test
 	void testRemove()
 	{
-		array = new SynchronizedArrayList<Integer>();
-		for (int i = 0; i < 10; i++)
-		{
-			array.add(new Integer(i));
-		}
+		array = InstantiateAndPopulate(len);
+		
 		assertEquals("[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]", array.toString());
 		assertEquals(10, array.capacity());
 
@@ -226,11 +221,8 @@ class SynchronizedArrayListTest
 	@Test
 	void testClear()
 	{
-		array = new SynchronizedArrayList<>();
-		for (int i = 0; i < 17; i++)
-		{
-			array.add(new Integer(i));
-		}
+		array = InstantiateAndPopulate(17);
+
 		assertEquals("[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]", array.toString());
 		assertEquals(20, array.capacity());
 		array.clear();
@@ -242,14 +234,11 @@ class SynchronizedArrayListTest
 	@Test
 	void testRemoveIndex()
 	{
-		array = new SynchronizedArrayList<>();
-		for (int i = 0; i < 17; i++)
-		{
-			array.add(new Integer(i));
-		}
+		array = InstantiateAndPopulate(17);
+		
 		assertEquals("[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]", array.toString());
 		assertEquals(20, array.capacity());
-		for (int i = 0; i < 10; i++)
+		for (int i = 0; i < len; i++)
 		{
 			array.remove(new Integer(i));
 
@@ -269,13 +258,10 @@ class SynchronizedArrayListTest
 	@Test
 	void testSet()
 	{
-		array = new SynchronizedArrayList<>();
-		for (int i = 0; i < 10; i++)
-		{
-			array.add(new Integer(i));
-		}
+		array = InstantiateAndPopulate(len);
+		
 		assertEquals("[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]", array.toString());
-		for (int i = 0; i < 10; i++)
+		for (int i = 0; i < len; i++)
 		{
 			array.set(i, new Integer(9 - i));
 		}
@@ -287,20 +273,17 @@ class SynchronizedArrayListTest
 	@Test
 	void testClone()
 	{
-		array = new SynchronizedArrayList<>();
+		array = InstantiateAndPopulate(len);
 		assertEquals(false, array == array.clone());
 	}
 	
 	@Test
 	void testIndexOf()
 	{
-		array = new SynchronizedArrayList<>();
-		for (int i = 0; i < 10; i++)
-		{
-			array.add(new Integer(i));
-		}
+		array = InstantiateAndPopulate(len);
+		
 		assertEquals("[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]", array.toString());
-		for (int i = 0; i < 10; i++)
+		for (int i = 0; i < len; i++)
 		{
 			assertEquals(i, array.indexOf(new Integer(i)));
 		}
@@ -310,7 +293,7 @@ class SynchronizedArrayListTest
 	void testLastIndexOf()
 	{
 		array = new SynchronizedArrayList<>();
-		for (int i = 1; i < 10; i++)
+		for (int i = 1; i < len; i++)
 		{
 			array.add(new Integer(i%3));
 		}
@@ -322,13 +305,10 @@ class SynchronizedArrayListTest
 	@Test
 	void testContains()
 	{
-		array = new SynchronizedArrayList<>();
-		for (int i = 0; i < 10; i++)
-		{
-			array.add(new Integer(i));
-		}
+		array = InstantiateAndPopulate(len);
+		
 		assertEquals("[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]", array.toString());
-		for (int i = 0; i < 10; i++)
+		for (int i = 0; i < len; i++)
 		{
 			assertTrue(array.contains(new Integer(i)));
 		}
@@ -337,11 +317,8 @@ class SynchronizedArrayListTest
 	@Test
 	void testIsEmpty()
 	{
-		array = new SynchronizedArrayList<>();
-		for (int i = 0; i < 10; i++)
-		{
-			array.add(new Integer(i));
-		}
+		array = InstantiateAndPopulate(len);
+		
 		assertEquals("[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]", array.toString());
 		array.clear();
 		assertTrue(array.isEmpty());
@@ -350,11 +327,8 @@ class SynchronizedArrayListTest
 	@Test
 	void testEnsureMinCapAndTrim()
 	{
-		array = new SynchronizedArrayList<>();
-		for (int i = 0; i < 5; i++)
-		{
-			array.add(new Integer(i));
-		}
+		array = InstantiateAndPopulate(5);
+		
 		assertEquals(5, array.size());
 		
 		assertEquals(10, array.capacity());
@@ -373,14 +347,20 @@ class SynchronizedArrayListTest
 	@Test
 	void testToArray()
 	{
-		int count = 10;
-		array = new SynchronizedArrayList<>(count);
-		for (int i = 0; i < count; i++)
-		{
-			array.add(i);
-		}
+		array = InstantiateAndPopulate(len);
+		
 		Object[] arr = array.toArray();
 		assertEquals("[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]", Arrays.toString(arr));
+	}
+	
+	SynchronizedArrayList<Integer> InstantiateAndPopulate(int len)
+	{
+		array = new SynchronizedArrayList<>();
+		for (int i = 0; i < len; i++)
+		{
+			array.add(new Integer(i));
+		}
+		return array;
 	}
 	
 	@Test
