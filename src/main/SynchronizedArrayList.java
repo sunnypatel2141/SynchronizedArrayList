@@ -2,11 +2,11 @@ package main;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
-
-import javax.swing.table.TableColumn;
+import java.util.Set;
 
 public class SynchronizedArrayList<E>
 {
@@ -342,7 +342,7 @@ public class SynchronizedArrayList<E>
 		return true;
 	}
 	
-	protected void removeRange(int fromIndex, int toIndex) throws IndexOutOfBoundsException
+	public void removeRange(int fromIndex, int toIndex) throws IndexOutOfBoundsException
 	{
 		int size = size();
 		if (fromIndex < 0)
@@ -379,25 +379,101 @@ public class SynchronizedArrayList<E>
 		
 		while (size * 2 < capacity())
 		{
-			int len = array.length;
-			array = copyContents(array, new Object[len]);
+			int len = array.length / 2;
+			array = copyContents(array, new Object[len], true);
 		}
 		
-		for (int i = toIndex + 1, j = 0; j < tempArr.length; j++, i++)
+		for (int i = fromIndex, j = 0; j < tempArr.length; j++, i++)
 		{
 			array[i] = tempArr[j];
 		}
 	}
 	
-//	public boolean removeAll(Collection<?> c)
-//	{
-//		
-//	}
-//	
-//	public boolean retainAll(Collection<?> c)
-//	{
-//		
-//	}
+	public boolean removeAll(Collection<?> c) throws NullPointerException, ClassCastException
+	{
+		if (c == null) 
+		{
+			String str = "Collection " + c + " cannot be null.";
+			throw new NullPointerException(str);
+		}
+		
+		//not using remove method because of constant resizing
+		// this method utilizes assignment instead of allocating smaller array and copying over elements
+		
+		boolean changed = false;
+		int size = size();
+		
+		Set<Integer> indices = new HashSet<>();
+		
+		for (int index = 0; index < size; index++)
+		{
+			if (!c.contains(array[index]))
+			{
+				indices.add(index);
+			} else {
+				if (!changed)
+				{
+					changed = true;
+				}
+				counter-=1;
+			}
+		}
+		
+		Object[] tempArr = new Object[indices.size()];
+		Iterator<Integer> indIt = indices.iterator();
+		int travel = 0;
+		
+		while (indIt.hasNext())
+		{
+			tempArr[travel] = array[indIt.next()];
+			travel++;
+		}
+		array = tempArr;
+		return changed;
+	}
+	
+	public boolean retainAll(Collection<?> c)
+	{
+		if (c == null) 
+		{
+			String str = "Collection " + c + " cannot be null.";
+			throw new NullPointerException(str);
+		}
+		
+		//not using remove method because of constant resizing
+		// this method utilizes assignment instead of allocating smaller array and copying over elements
+		
+		boolean changed = false;
+		int size = size();
+		counter = 0;
+		
+		Set<Integer> indices = new HashSet<>();
+		
+		for (int index = 0; index < size; index++)
+		{
+			if (c.contains(array[index]))
+			{
+				indices.add(index);
+				if (!changed)
+				{
+					changed = true;
+				}
+				counter++;
+			}
+		}
+		
+		Object[] tempArr = new Object[indices.size()];
+		Iterator<Integer> indIt = indices.iterator();
+		int travel = 0;
+		
+		while (indIt.hasNext())
+		{
+			tempArr[travel] = array[indIt.next()];
+			travel++;
+		}
+		array = tempArr;
+		return changed;
+	}
 //
 //	public ListIterator<E> listIterator(int index)
 //	{
@@ -565,6 +641,15 @@ public class SynchronizedArrayList<E>
 	private Object[] copyContents(Object[] from, Object[] to)
 	{
 		for (int i = 0; i < from.length; i++)
+		{
+			to[i] = from[i];
+		}
+		return to;
+	}
+	
+	private Object[] copyContents(Object[] from, Object[] to, boolean smallerToIndex)
+	{
+		for (int i = 0; i < to.length; i++)
 		{
 			to[i] = from[i];
 		}

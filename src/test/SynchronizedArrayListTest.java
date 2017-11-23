@@ -152,6 +152,44 @@ class SynchronizedArrayListTest
 		array = InstantiateAndPopulate(len);
 		assertEquals("[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]", array.toString());
 		
+		array.removeRange(3, 5);
+		assertEquals("[0, 1, 2, 6, 7, 8, 9]", array.toString());
+		
+		array.removeRange(0, 3);
+		assertEquals("[7, 8, 9]", array.toString());
+		
+		assertThrows(IndexOutOfBoundsException.class, ()->array.removeRange(3, 3));
+	}
+	
+	@Test
+	void testremoveAllCollection()
+	{
+		array = InstantiateAndPopulate(len);
+		assertEquals("[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]", array.toString());
+		
+		ArrayList<Integer> list = new ArrayList<>();
+		list.add(0); list.add(1); list.add(9);
+		
+		ArrayList<Integer> list2 = null;
+		
+		assertEquals(true, array.removeAll(list));
+		assertEquals("[2, 3, 4, 5, 6, 7, 8]", array.toString());
+		assertThrows(NullPointerException.class, ()->array.removeAll(list2));
+	}
+	
+	@Test
+	void testretainAllCollection()
+	{
+		array = InstantiateAndPopulate(len);
+		assertEquals("[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]", array.toString());
+		
+		ArrayList<Integer> list = new ArrayList<>();
+		list.add(0); list.add(1); list.add(9);
+		assertEquals(true, array.retainAll(list));
+		assertEquals("[0, 1, 9]", array.toString());
+		
+		ArrayList<Integer> list2 = null;
+		assertThrows(NullPointerException.class, ()->array.retainAll(list2));
 	}
 	
 	@Test
