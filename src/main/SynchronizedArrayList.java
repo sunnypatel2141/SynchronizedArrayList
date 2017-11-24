@@ -214,18 +214,21 @@ public class SynchronizedArrayList<E>
 			String str = "Index: " + index + ", Size: " + size;
 			throw new IndexOutOfBoundsException(str);
 		}
-
+		
 		@SuppressWarnings("unchecked")
 		E obj = (E) array[index];
-		for (int i = index; i < size; i++)
+		for (int i = index; i < size - 1; i++)
 		{
 			array[i] = array[i + 1];
 		}
+		array[size - 1] = null;
 		counter--;
 
 		size = size();
+		
 		if (size * 2 < capacity() && capacity() > 10)
 		{
+			System.out.println("Here");
 			array = trimContents(true);
 		}
 		return obj;
