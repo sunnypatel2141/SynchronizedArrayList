@@ -221,21 +221,49 @@ class SynchronizedArrayListTest
 	@Test
 	void testListIterator()
 	{
-		array = InstantiateAndPopulate(len);
+		array = InstantiateAndPopulate(5);
 
 		ListIterator<Integer> it = array.listIterator();
-		int index = 0;
+		int i = 0;
+		
+		//0 1 2 3 4
 		while (it.hasNext())
 		{
-//			System.out.println(index);
-			assertEquals(new Integer(index), it.next());
-			index++;
+			assertEquals(new Integer(i), it.next());
+			i++;
 		}
 
+		//4 3 2 1 0
 		while (it.hasPrevious())
 		{
-			index--;
-			assertEquals(new Integer(index), it.previous());
+			i--;
+			assertEquals(new Integer(i), it.previous());
+		}
+		
+		//remove 0
+		it.remove();
+
+		assertEquals("[1, 2, 3, 4]", array.toString());
+		
+		while (it.hasNext())
+		{
+			//1 -> 4 (0 removed)
+			assertEquals(new Integer(i+1), it.next());
+			i++;
+		}
+		
+		//4 removed
+		it.remove();
+		
+		assertEquals("[1, 2, 3]", array.toString());
+	
+		System.out.println(it.previousIndex());
+		
+		while (it.hasPrevious())
+		{
+			//1 -> 3
+			i--;
+			assertEquals(new Integer(i), it.previous());
 		}
 	}
 

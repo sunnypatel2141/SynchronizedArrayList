@@ -237,17 +237,18 @@ public class SynchronizedArrayList<E>
 		index = indexOf(o);
 		if (index != -1)
 		{
-			for (int i = index; i < size() - 1; i++)
+			counter--;
+			for (int i = index; i < size(); i++)
 			{
 				array[i] = array[i + 1];
 			}
-			counter--;
-
+			
+			array[size()] = null;
+			
 			if (size() * 2 < capacity() && capacity() > 10)
 			{
 				array = trimContents(true);
 			}
-
 			return true;
 		}
 		return false;
@@ -474,10 +475,97 @@ public class SynchronizedArrayList<E>
 		array = tempArr;
 		return changed;
 	}
-//
-//	public ListIterator<E> listIterator(int index)
+
+//	public ListIterator<E> listIterator(int index) throws IndexOutOfBoundsException
 //	{
-//		
+//		if (index < 0 || index > size())
+//		{
+//			String str = "Index: " + index;
+//			throw new IndexOutOfBoundsException(str);
+//		}
+//		ListIterator<E> it = new ListIterator<E>()
+//		{
+//			
+//			
+//			@Override
+//			public boolean hasNext()
+//			{
+//				if (index < size())
+//				{
+//					return true;
+//				}
+//				return false;
+//			}
+//
+//			@SuppressWarnings("unchecked")
+//			@Override
+//			public E next() throws NoSuchElementException
+//			{
+//				if (index > size())
+//				{
+//					String str = "Next index: " + index + ", Size: " + size();
+//					throw new NoSuchElementException(str);
+//				}
+//				Object obj = array[index];
+//				index++;
+//				return (E) obj;
+//			}
+//
+//			@Override
+//			public boolean hasPrevious()
+//			{
+//				if (index - 1 > -1)
+//				{
+//					return true;
+//				}
+//				return false;
+//			}
+//
+//			@SuppressWarnings("unchecked")
+//			@Override
+//			public E previous() throws NoSuchElementException
+//			{
+//				index--;
+//				if (index < 0)
+//				{
+//					String str = "Previous index: " + index;
+//					throw new NoSuchElementException(str);
+//				}
+//				Object obj = array[index];
+//				return (E) obj;
+//			}
+//
+//			@Override
+//			public int nextIndex()
+//			{
+//				return index;
+//			}
+//
+//			@Override
+//			public int previousIndex()
+//			{
+//				return (index - 1);
+//			}
+//
+//			@Override
+//			public void remove()
+//			{
+//
+//			}
+//
+//			@Override
+//			public void set(E e)
+//			{
+//				// TODO Auto-generated method stub
+//			}
+//
+//			@Override
+//			public void add(E e)
+//			{
+//				// TODO Auto-generated method stub
+//			}
+//		};
+//		return it;
 //	}
 	
 	public ListIterator<E> listIterator()
@@ -485,6 +573,7 @@ public class SynchronizedArrayList<E>
 		ListIterator<E> it = new ListIterator<E>()
 		{
 			int index = 0;
+			Object obj;
 
 			@Override
 			public boolean hasNext()
@@ -505,7 +594,7 @@ public class SynchronizedArrayList<E>
 					String str = "Next index: " + index + ", Size: " + size();
 					throw new NoSuchElementException(str);
 				}
-				Object obj = array[index];
+				obj = array[index];
 				index++;
 				return (E) obj;
 			}
@@ -530,7 +619,7 @@ public class SynchronizedArrayList<E>
 					String str = "Previous index: " + index;
 					throw new NoSuchElementException(str);
 				}
-				Object obj = array[index];
+				obj = array[index];
 				return (E) obj;
 			}
 
@@ -549,7 +638,8 @@ public class SynchronizedArrayList<E>
 			@Override
 			public void remove()
 			{
-
+				SynchronizedArrayList.this.remove(obj);
+				index--;
 			}
 
 			@Override
