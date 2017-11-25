@@ -1,7 +1,6 @@
 package test;
 
 import static org.junit.jupiter.api.Assertions.*;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -166,6 +165,127 @@ class SynchronizedArrayListTestString
 		assertEquals(10, array.capacity());
 		assertEquals(str.replace("Int: 0, ", ""), array.toString());
 	}
+	
+	@Test
+	void testRemoveObj()
+	{
+		InstantiateAndPopulate(true);
+		assertEquals(str, array.toString());
+		array.add("Int: 99");
+		assertEquals(20, array.capacity());
+		array.remove("Int: 1");
+		array.remove("Int: 6");
+		assertEquals(10, array.capacity());
+		
+		String localStr = "[Int: 0, Int: 2, Int: 3, Int: 4, Int: 5, Int: 7, Int: 8, Int: 9, Int: 99]";
+		assertEquals(localStr, array.toString());
+	}
+	
+	@Test
+	void testClear()
+	{
+		testRemoveObj();
+		array.clear();
+		assertEquals("[]", array.toString());
+	}
+	
+	@Test
+	void testAddAll()
+	{
+		List<String> arr = new ArrayList<>();
+		for (int i = 0; i < len; i++)
+		{
+			arr.add(i, "Int: " + i);
+		}
+		
+		array = new SynchronizedArrayList<>();
+		array.addAll(arr);
+		
+		assertEquals(10, array.capacity());
+		assertEquals(str, array.toString());
+	}
+
+	
+	@Test
+	void addAllIndex()
+	{
+		array = new SynchronizedArrayList<>();
+		array.add("Int: 99");
+		
+		List<String> arr = new ArrayList<>();
+		for (int i = 0; i < len; i++)
+		{
+			arr.add("Int: " + i);
+		}
+		
+		assertEquals(10, array.capacity());
+		String strArr = Arrays.toString(arr.toArray());
+		strArr = strArr.replaceAll("]", ", ") + "Int: 99]";
+		array.addAll(0, arr);
+		assertEquals(strArr, array.toString());
+	}
+	
+	@Test
+	void testRemoveRange()
+	{
+		InstantiateAndPopulate(true);
+		assertEquals(str, array.toString());
+		
+		List<String> arr = new ArrayList<>();
+		for (int i = 0; i < len; i++)
+		{
+			arr.add("Int: " + i);
+		}
+		
+		array.addAll(arr);
+		assertEquals(20, array.capacity());
+		
+		array.removeRange(10, array.size() - 1);
+		assertEquals(str, array.toString());
+	}
+	
+	@Test
+	void removeAll()
+	{
+		InstantiateAndPopulate(true);
+		assertEquals(str, array.toString());
+		List<String> arr = new ArrayList<>();
+		for (int i = 0; i < len; i+=2)
+		{
+			arr.add("Int: " + i);
+		}
+		
+		array.removeAll(arr);
+		assertEquals("[Int: 1, Int: 3, Int: 5, Int: 7, Int: 9]", array.toString());
+		
+		List<String> arr2 = null;
+		assertThrows(NullPointerException.class, ()->array.retainAll(arr2));
+	}
+	
+	@Test
+	void retainAll()
+	{
+		InstantiateAndPopulate(true);
+		assertEquals(str, array.toString());
+		List<String> arr = new ArrayList<>();
+		for (int i = 0; i < len * 2; i+=2)
+		{
+			arr.add("Int: " + i);
+		}
+		
+		array.retainAll(arr);
+		assertEquals("[Int: 0, Int: 2, Int: 4, Int: 6, Int: 8]", array.toString());
+		
+		List<String> arr2 = null;
+		assertThrows(NullPointerException.class, ()->array.retainAll(arr2));
+	}
+	
+	@Test
+	void testListIterator()
+	{
+		
+	}
+	
 }
 
 

@@ -273,6 +273,7 @@ public class SynchronizedArrayList<E>
 		
 		int size = size();
 		int cSize = c.size();
+		
 		while (size + cSize > capacity())
 		{
 			long validSize = capacity() * growMultiplier;
@@ -290,7 +291,7 @@ public class SynchronizedArrayList<E>
 			array[size] = iterator.next();
 			size++;
 		}
-		counter = size + cSize;
+		counter = size;
 		return true;
 	}
 	
