@@ -16,8 +16,8 @@ public class SynchronizedArrayList<E>
 	
 	class ListIterSub implements ListIterator<E>
 	{
-		private int index;
-		E e;
+		int index;
+		int modificationInd;
 		
 		ListIterSub(int index)
 		{
@@ -42,9 +42,9 @@ public class SynchronizedArrayList<E>
 				String str = "Next index: " + index + ", Size: " + size();
 				throw new NoSuchElementException(str);
 			}
-			e = (E) array[index];
+			modificationInd = index;
 			index++;
-			return e;
+			return array[modificationInd];
 		}
 
 		@Override
@@ -66,8 +66,8 @@ public class SynchronizedArrayList<E>
 				String str = "Previous index: " + index;
 				throw new NoSuchElementException(str);
 			}
-			e = (E) array[index];
-			return e;
+			modificationInd = index;
+			return array[index];
 		}
 
 		@Override
@@ -85,20 +85,23 @@ public class SynchronizedArrayList<E>
 		@Override
 		public void remove()
 		{
-			SynchronizedArrayList.this.remove(e);
-			index--;
+			SynchronizedArrayList.this.remove(modificationInd);
+			if (nextIndex() != 0)
+			{
+				index--;
+			}
 		}
 
 		@Override
-		public void set(E e)
+		public void set(E eNew)
 		{
-			// TODO Auto-generated method stub
+			SynchronizedArrayList.this.set(modificationInd, eNew);
 		}
 
 		@Override
-		public void add(E e)
+		public void add(E e2)
 		{
-			// TODO Auto-generated method stub
+			SynchronizedArrayList.this.add(index, e2);
 		}
 	}
 
@@ -695,13 +698,12 @@ public class SynchronizedArrayList<E>
 				return false;
 			}
 
-			@SuppressWarnings("unchecked")
 			@Override
 			public E next()
 			{
-				Object obj = array[index];
+				E obj = array[index];
 				index++;
-				return (E) obj;
+				return obj;
 			}
 		};
 		return it;
@@ -729,7 +731,7 @@ public class SynchronizedArrayList<E>
 		SynchronizedArrayList<E> sal = new SynchronizedArrayList<>(length + 1);
 		for (int i = fromIndex; i < toIndex; i++)
 		{
-			sal.add((E) array[i]);
+			sal.add(array[i]);
 		}
 		return sal;
 	}

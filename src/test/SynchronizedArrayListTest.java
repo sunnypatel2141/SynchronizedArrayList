@@ -232,7 +232,6 @@ class SynchronizedArrayListTest
 			assertEquals(new Integer(i), it.next());
 			i++;
 		}
-
 		//4 3 2 1 0
 		while (it.hasPrevious())
 		{
@@ -242,12 +241,12 @@ class SynchronizedArrayListTest
 		
 		//remove 0
 		it.remove();
-
+		
 		assertEquals("[1, 2, 3, 4]", array.toString());
 		
 		while (it.hasNext())
 		{
-			//1 -> 4 (0 removed)
+//			1 -> 4 (0 removed)
 			assertEquals(new Integer(i+1), it.next());
 			i++;
 		}
@@ -256,11 +255,10 @@ class SynchronizedArrayListTest
 		it.remove();
 		
 		assertEquals("[1, 2, 3]", array.toString());
-	
-		System.out.println(it.previousIndex());
 		
 		while (it.hasPrevious())
 		{
+//			System.out.println(it.previous());
 			//1 -> 3
 			i--;
 			assertEquals(new Integer(i), it.previous());
