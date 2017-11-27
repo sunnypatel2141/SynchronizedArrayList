@@ -263,7 +263,7 @@ class SynchronizedArrayListTest
 			assertEquals(new Integer(i), it.previous());
 		}
 		
-		it.add(0);
+		it.add(new Integer(0));
 		assertEquals("[0, 1, 2, 3]", array.toString());
 		assertThrows(IllegalStateException.class, ()->it.remove());
 	}

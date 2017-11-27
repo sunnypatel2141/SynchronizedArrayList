@@ -3,7 +3,9 @@ package test;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import org.junit.jupiter.api.Test;
 
@@ -283,9 +285,57 @@ class SynchronizedArrayListTestString
 	@Test
 	void testListIterator()
 	{
+		InstantiateAndPopulate(false);
+		ListIterator<String> it = array.listIterator();
+		int i = 0;
+		while (it.hasNext())
+		{
+			String str = "Int: " + i;
+			assertEquals(str, it.next());
+			i++;
+		}
+		while (it.hasPrevious())
+		{
+			i--;
+			String str = "Int: " + i;
+			assertEquals(str, it.previous());
+		}
 		
+		it.add("Int: 99");
+		assertEquals("Int: 99", it.next());
+		while (it.hasNext())
+		{
+			String str = "Int: " + i++;
+			assertEquals(str, it.next());
+		}
+		it.remove();
+		assertThrows(IllegalStateException.class, ()->it.remove());
 	}
 	
+	@Test
+	void testSubList()
+	{
+		InstantiateAndPopulate(true);
+		SynchronizedArrayList<String> sal = array.subList(0, array.size());
+		assertEquals(sal.toString(), array.toString());
+		
+		assertThrows(IllegalArgumentException.class, ()->array.subList(0, -1));
+		assertThrows(IndexOutOfBoundsException.class, ()->array.subList(-1, 1));
+		assertThrows(IndexOutOfBoundsException.class, ()->array.subList(0, array.size()+1));
+	}
+	
+	@Test
+	void testIterator()
+	{
+		InstantiateAndPopulate(true);
+		Iterator<String> it = array.iterator();
+		int i = 0;
+		while (it.hasNext())
+		{
+			String str = "Int: " + i++;
+			assertEquals(str, it.next());
+		}
+	}
 }
 
 

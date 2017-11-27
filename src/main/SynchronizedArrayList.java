@@ -109,10 +109,6 @@ public class SynchronizedArrayList<E>
 		@Override
 		public void set(E eNew)
 		{
-			if (eNew.getClass() != this.getClass())
-			{
-				throw new ClassCastException("Different class type!");
-			}
 			if (!allowed)
 			{
 				throw new IllegalStateException("Operation not allowed!");
@@ -124,10 +120,6 @@ public class SynchronizedArrayList<E>
 		@Override
 		public void add(E e2)
 		{
-			if (e2.getClass() != this.getClass())
-			{
-				throw new ClassCastException("Different class type!");
-			}
 			if (!allowed)
 			{
 				throw new IllegalStateException("Operation not allowed!");
