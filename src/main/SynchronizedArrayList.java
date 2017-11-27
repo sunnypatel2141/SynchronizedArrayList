@@ -18,6 +18,7 @@ public class SynchronizedArrayList<E>
 	{
 		int index;
 		int modificationInd;
+		boolean allowed = true;
 		
 		ListIterSub(int index)
 		{
@@ -41,6 +42,10 @@ public class SynchronizedArrayList<E>
 			{
 				String str = "Next index: " + index + ", Size: " + size();
 				throw new NoSuchElementException(str);
+			}
+			if (!allowed)
+			{
+				allowed = true;
 			}
 			modificationInd = index;
 			index++;
@@ -66,6 +71,10 @@ public class SynchronizedArrayList<E>
 				String str = "Previous index: " + index;
 				throw new NoSuchElementException(str);
 			}
+			if (!allowed)
+			{
+				allowed = true;
+			}
 			modificationInd = index;
 			return array[index];
 		}
@@ -85,23 +94,46 @@ public class SynchronizedArrayList<E>
 		@Override
 		public void remove()
 		{
+			if (!allowed)
+			{
+				throw new IllegalStateException("Operation not allowed!");
+			}
 			SynchronizedArrayList.this.remove(modificationInd);
 			if (nextIndex() != 0)
 			{
 				index--;
 			}
+			allowed = false;
 		}
 
 		@Override
 		public void set(E eNew)
 		{
+			if (eNew.getClass() != this.getClass())
+			{
+				throw new ClassCastException("Different class type!");
+			}
+			if (!allowed)
+			{
+				throw new IllegalStateException("Operation not allowed!");
+			}
 			SynchronizedArrayList.this.set(modificationInd, eNew);
+			allowed = false;
 		}
 
 		@Override
 		public void add(E e2)
 		{
+			if (e2.getClass() != this.getClass())
+			{
+				throw new ClassCastException("Different class type!");
+			}
+			if (!allowed)
+			{
+				throw new IllegalStateException("Operation not allowed!");
+			}
 			SynchronizedArrayList.this.add(index, e2);
+			allowed = false;
 		}
 	}
 
@@ -584,97 +616,16 @@ public class SynchronizedArrayList<E>
 		return changed;
 	}
 
-//	public ListIterator<E> listIterator(int index) throws IndexOutOfBoundsException
-//	{
-//		if (index < 0 || index > size())
-//		{
-//			String str = "Index: " + index;
-//			throw new IndexOutOfBoundsException(str);
-//		}
-//		ListIterator<E> it = new ListIterator<E>()
-//		{
-//			
-//			
-//			@Override
-//			public boolean hasNext()
-//			{
-//				if (index < size())
-//				{
-//					return true;
-//				}
-//				return false;
-//			}
-//
-//			@SuppressWarnings("unchecked")
-//			@Override
-//			public E next() throws NoSuchElementException
-//			{
-//				if (index > size())
-//				{
-//					String str = "Next index: " + index + ", Size: " + size();
-//					throw new NoSuchElementException(str);
-//				}
-//				Object obj = array[index];
-//				index++;
-//				return (E) obj;
-//			}
-//
-//			@Override
-//			public boolean hasPrevious()
-//			{
-//				if (index - 1 > -1)
-//				{
-//					return true;
-//				}
-//				return false;
-//			}
-//
-//			@SuppressWarnings("unchecked")
-//			@Override
-//			public E previous() throws NoSuchElementException
-//			{
-//				index--;
-//				if (index < 0)
-//				{
-//					String str = "Previous index: " + index;
-//					throw new NoSuchElementException(str);
-//				}
-//				Object obj = array[index];
-//				return (E) obj;
-//			}
-//
-//			@Override
-//			public int nextIndex()
-//			{
-//				return index;
-//			}
-//
-//			@Override
-//			public int previousIndex()
-//			{
-//				return (index - 1);
-//			}
-//
-//			@Override
-//			public void remove()
-//			{
-//
-//			}
-//
-//			@Override
-//			public void set(E e)
-//			{
-//				// TODO Auto-generated method stub
-//			}
-//
-//			@Override
-//			public void add(E e)
-//			{
-//				// TODO Auto-generated method stub
-//			}
-//		};
-//		return it;
-//	}
+	public ListIterator<E> listIterator(int index) throws IndexOutOfBoundsException
+	{
+		if (index < 0 || index > size())
+		{
+			String str = "Index: " + index;
+			throw new IndexOutOfBoundsException(str);
+		}
+		ListIterator<E> it = new ListIterSub(index);
+		return it;
+	}
 	
 	public ListIterator<E> listIterator()
 	{

@@ -258,11 +258,54 @@ class SynchronizedArrayListTest
 		
 		while (it.hasPrevious())
 		{
-//			System.out.println(it.previous());
 			//1 -> 3
 			i--;
 			assertEquals(new Integer(i), it.previous());
 		}
+		
+		it.add(0);
+		assertEquals("[0, 1, 2, 3]", array.toString());
+		assertThrows(IllegalStateException.class, ()->it.remove());
+	}
+	
+	@Test
+	void testListIteratorIndex()
+	{
+		InstantiateAndPopulate(len);
+		ListIterator<Integer> it = array.listIterator(4);
+		int i = 4;
+		while (it.hasNext())
+		{
+			assertEquals(new Integer(i), it.next());
+			i++;
+		}
+		
+		while (it.hasPrevious())
+		{
+			i--;
+			assertEquals(new Integer(i), it.previous());
+		}
+		
+		it.remove();
+		assertEquals("[1, 2, 3, 4, 5, 6, 7, 8, 9]", array.toString());
+		
+		while (it.hasNext())
+		{
+			i++;
+			assertEquals(new Integer(i), it.next());
+		}
+		
+		it.remove();
+		assertEquals("[1, 2, 3, 4, 5, 6, 7, 8]", array.toString());
+		while (it.hasPrevious())
+		{
+			i--;
+			assertEquals(new Integer(i), it.previous());
+		}
+		
+		it.set(100);
+		assertEquals("[100, 2, 3, 4, 5, 6, 7, 8]", array.toString());
+		assertThrows(IllegalStateException.class, ()->it.set(99));
 	}
 
 	@Test
