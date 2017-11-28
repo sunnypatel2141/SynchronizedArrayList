@@ -13,12 +13,19 @@ public class SynchronizedArrayList<E>
 	private E[] array;
 	private int counter = 0;
 	private int growMultiplier = 2;
+	private final static int DEFAULT_SIZE = 10;
+	private final static int NOT_FOUND = -1;
 	
 	class ListIterSub implements ListIterator<E>
 	{
 		int index;
 		int modificationInd;
 		boolean allowed = true;
+		
+		ListIterSub()
+		{
+			this(0);
+		}
 		
 		ListIterSub(int index)
 		{
@@ -131,9 +138,13 @@ public class SynchronizedArrayList<E>
 
 	public SynchronizedArrayList()
 	{
-		this(10);
+		this(DEFAULT_SIZE);
 	}
 
+	/**
+	 * SuppressWarning makes sense as only elements of type E will be added
+	 * to the array
+	 */
 	@SuppressWarnings("unchecked")
 	public SynchronizedArrayList(int num) throws IllegalArgumentException
 	{
@@ -144,6 +155,10 @@ public class SynchronizedArrayList<E>
 		array = (E[]) new Object[num];
 	}
 
+	/**
+	 * SuppressWarning makes sense as only elements of type E will be added
+	 * to the array
+	 */
 	@SuppressWarnings("unchecked")
 	public SynchronizedArrayList(Collection<? extends E> c) throws NullPointerException 
 	{
@@ -153,7 +168,7 @@ public class SynchronizedArrayList<E>
 			throw new NullPointerException(str);
 		}
 		Iterator<? extends E> it = c.iterator();
-		array = (E[]) new Object[10];
+		array = (E[]) new Object[DEFAULT_SIZE];
 		int i = 0;
 		
 		while (it.hasNext())
@@ -161,6 +176,9 @@ public class SynchronizedArrayList<E>
 			array[i] = it.next();
 			i++;
 			counter++;
+			
+			//increase array size if collection size > DEFAULT_SIZE
+			rangeCheckAndIncreaseSize(i, size());
 		}
 	}
 	
@@ -169,12 +187,11 @@ public class SynchronizedArrayList<E>
 		array = trimContents(false);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void ensureCapacity(int minCapacity)
 	{
 		if (capacity() < minCapacity)
 		{
-			array = copyContents(array, (E[]) new Object[minCapacity]);
+			array = increaseSizeAndCopyContents(minCapacity);
 		}
 	}
 	
@@ -185,49 +202,36 @@ public class SynchronizedArrayList<E>
 	
 	public boolean isEmpty()
 	{
-		if (size() == 0)
-		{
-			return true;
-		}
-		return false;
+		return size() == 0 ? true : false;
 	}
 
 	public boolean contains(Object o)
 	{
-		int index = indexOf(o);
-		if (index != -1)
-		{
-			return true;
-		}
-		return false;
+		return indexOf(o) == -1 ? false : true;
 	}
 	
 	public int indexOf(Object o)
 	{
-		int index = -1;
 		for (int i = 0; i < size(); i++)
 		{
 			if (array[i].equals(o))
 			{
-				index = i;
-				break;
+				return i;
 			}
 		}
-		return index;
+		return NOT_FOUND;
 	}
 	
 	public int lastIndexOf(Object o)
 	{
-		int index = -1;
 		for (int i = size() - 1; i > -1; i--)
 		{
 			if (array[i].equals(o))
 			{
-				index = i;
-				break;
+				return i;
 			}
 		}
-		return index;
+		return NOT_FOUND;
 	}
 	
 	public Object clone()
@@ -278,22 +282,15 @@ public class SynchronizedArrayList<E>
 	
 	public boolean add(E e)
 	{
-		// counter returned not size
 		int numOfElements = size();
 		int capacity = capacity();
-		if (numOfElements + 1 > capacity)
+		
+		//if unable to increase capacity - return false
+		if (!rangeCheckAndIncreaseSize(numOfElements + 1, capacity))
 		{
-			long validSize = capacity * growMultiplier;
-			if (validSize < Integer.MAX_VALUE)
-			{
-				@SuppressWarnings("unchecked")
-				E[] temp = (E[]) new Object[(int) validSize];
-				array = copyContents(array, temp);
-			} else
-			{
-				return false;
-			}
+			return false;
 		}
+		
 		array[counter] = e;
 		counter++;
 		return true;
@@ -306,16 +303,7 @@ public class SynchronizedArrayList<E>
 		{
 			throw new IndexOutOfBoundsException();
 		}
-		if (size + 1 > capacity())
-		{
-			long validSize = capacity() * growMultiplier;
-			if (validSize < Integer.MAX_VALUE)
-			{
-				@SuppressWarnings("unchecked")
-				E[] temp = (E[]) new Object[(int) validSize];
-				array = copyContents(array, temp);
-			}
-		}
+		rangeCheckAndIncreaseSize(size + 1, capacity());
 		for (int i = size; i > index; i--)
 		{
 			array[i] = array[i - 1];
@@ -342,12 +330,7 @@ public class SynchronizedArrayList<E>
 		counter--;
 
 		size = size();
-		
-		if (size * 2 < capacity() && capacity() > 10)
-		{
-			System.out.println("Here");
-			array = trimContents(true);
-		}
+		rangeCheckAndDecreaseSize(size, capacity());
 		return obj;
 	}
 	
@@ -365,10 +348,7 @@ public class SynchronizedArrayList<E>
 			
 			array[size()] = null;
 			
-			if (size() * 2 < capacity() && capacity() > 10)
-			{
-				array = trimContents(true);
-			}
+			rangeCheckAndDecreaseSize(size(), capacity());
 			return true;
 		}
 		return false;
@@ -377,7 +357,7 @@ public class SynchronizedArrayList<E>
 	@SuppressWarnings("unchecked")
 	public void clear()
 	{
-		array = (E[]) new Object[10];
+		array = (E[]) new Object[DEFAULT_SIZE];
 		counter = 0;
 	}
 	
@@ -392,19 +372,19 @@ public class SynchronizedArrayList<E>
 		int size = size();
 		int cSize = c.size();
 		
-		while (size + cSize > capacity())
+		//resize array to accommodate c
+		while (true)
 		{
-			long validSize = capacity() * growMultiplier;
-			if (validSize < Integer.MAX_VALUE)
-			{
-				@SuppressWarnings("unchecked")
-				E[] tempArr = (E[]) new Object[(int) validSize];
-				array = copyContents(array, tempArr);
-			} else
+			if (!rangeCheckAndIncreaseSize(size + cSize, capacity()))
 			{
 				return false;
 			}
+			if (size + cSize <= capacity())
+			{
+				break;
+			}
 		}
+		
 		Iterator<? extends E> iterator = c.iterator();
 		while (iterator.hasNext())
 		{
@@ -422,7 +402,7 @@ public class SynchronizedArrayList<E>
 			String str = "Collection " + c + " is null";
 			throw new NullPointerException(str);
 		}
-		int size = size();
+		int size = size(), cSize = c.size();
 		
 		if (index < 0 || index > size)
 		{
@@ -437,19 +417,16 @@ public class SynchronizedArrayList<E>
 			tempArr[j] = array[i];
 		}
 		
-		int cSize = c.size();
-		
-		while (size() + cSize > capacity())
+		//resize array to accommodate c
+		while (true)
 		{
-			long validSize = capacity() * growMultiplier;
-			if (validSize < Integer.MAX_VALUE)
-			{
-				@SuppressWarnings("unchecked")
-				E[] tempArr2 = (E[]) new Object[(int) validSize];
-				array = copyContents(array, tempArr2);
-			} else
+			if (!rangeCheckAndIncreaseSize(size + cSize, capacity()))
 			{
 				return false;
+			}
+			if (size + cSize <= capacity())
+			{
+				break;
 			}
 		}
 		
@@ -506,12 +483,15 @@ public class SynchronizedArrayList<E>
 		counter -= range;
 		size = size();
 		
-		while (size * 2 < capacity())
+		while (true)
 		{
-			int len = array.length / 2;
-			@SuppressWarnings("unchecked")
-			E[] tempArr2 = (E[]) new Object[len]; 
-			array = copyContents(array, tempArr2, true);
+			if (size * 2 >= capacity() || capacity() <= 10)
+			{
+				break;
+			}
+
+			//divide array in half and copy contents
+			rangeCheckAndCopyContents();
 		}
 		
 		for (int i = fromIndex, j = 0; j < tempArr.length; j++, i++)
@@ -615,14 +595,12 @@ public class SynchronizedArrayList<E>
 			String str = "Index: " + index;
 			throw new IndexOutOfBoundsException(str);
 		}
-		ListIterator<E> it = new ListIterSub(index);
-		return it;
+		return new ListIterSub(index);
 	}
 	
 	public ListIterator<E> listIterator()
 	{
-		ListIterator<E> it = new ListIterSub(0);
-		return it;
+		return new ListIterSub();
 	}
 	
 	public Iterator<E> iterator()
@@ -695,24 +673,24 @@ public class SynchronizedArrayList<E>
 		return newArray;
 	}
 
-	private E[] copyContents(E[] from, E[] to)
+	private E[] increaseSizeAndCopyContents(int newSize)
 	{
-		for (int i = 0; i < from.length; i++)
+		/**
+		 * Suppress Warning makes sense as only elements
+		 * of type E are added
+		 */
+		@SuppressWarnings("unchecked")
+		E[] tempArr = (E[]) new Object[newSize];
+		
+		//traverse until end of smaller array
+		int len = array.length > newSize ? newSize : array.length;
+		for (int i = 0; i < len; i++)
 		{
-			to[i] = from[i];
+			tempArr[i] = array[i];
 		}
-		return to;
+		return tempArr;
 	}
 	
-	private E[] copyContents(E[] from, E[] to, boolean smallerToIndex)
-	{
-		for (int i = 0; i < to.length; i++)
-		{
-			to[i] = from[i];
-		}
-		return to;
-	}
-
 	public int capacity()
 	{
 		return array.length;
@@ -733,5 +711,33 @@ public class SynchronizedArrayList<E>
 		}
 		sb.append("]");
 		return sb.toString();
+	}
+	
+	private boolean rangeCheckAndIncreaseSize(int i, int size)
+	{
+		if (i > size)
+		{
+			long validSize = growMultiplier * size;
+			if (validSize > Integer.MAX_VALUE)
+			{
+				return false;
+			}
+			array = increaseSizeAndCopyContents((int) validSize);
+		}
+		return true;
+	}
+	
+	private void rangeCheckAndDecreaseSize(int size, int capacity)
+	{
+		if (size * 2 < capacity && capacity > 10)
+		{
+			array = trimContents(true);
+		}
+	}
+	
+	private void rangeCheckAndCopyContents()
+	{
+		int len = array.length / 2;
+		array = increaseSizeAndCopyContents(len);
 	}
 }

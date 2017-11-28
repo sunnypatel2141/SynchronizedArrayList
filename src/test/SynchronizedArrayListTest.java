@@ -149,14 +149,18 @@ class SynchronizedArrayListTest
 	@Test
 	void testRemoveRange()
 	{
-		array = InstantiateAndPopulate(len);
-		assertEquals("[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]", array.toString());
+		array = InstantiateAndPopulate(len * 2);
+		String str = "[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]";
+		assertEquals(str, array.toString());
+		assertEquals(20, array.capacity());
 		
-		array.removeRange(3, 5);
-		assertEquals("[0, 1, 2, 6, 7, 8, 9]", array.toString());
+		array.removeRange(3, 15);
+		assertEquals("[0, 1, 2, 16, 17, 18, 19]", array.toString());
+		assertEquals(10, array.capacity());
 		
 		array.removeRange(0, 3);
-		assertEquals("[7, 8, 9]", array.toString());
+		assertEquals("[17, 18, 19]", array.toString());
+		assertEquals(10, array.capacity());
 		
 		assertThrows(IndexOutOfBoundsException.class, ()->array.removeRange(3, 3));
 	}
