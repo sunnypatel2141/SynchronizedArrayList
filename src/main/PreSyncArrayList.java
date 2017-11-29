@@ -8,7 +8,7 @@ import java.util.ListIterator;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-public class SynchronizedArrayList<E>
+public class PreSyncArrayList<E>
 {
 	private E[] array;
 	private int counter = 0;
@@ -105,7 +105,7 @@ public class SynchronizedArrayList<E>
 			{
 				throw new IllegalStateException("Operation not allowed!");
 			}
-			SynchronizedArrayList.this.remove(modificationInd);
+			PreSyncArrayList.this.remove(modificationInd);
 			if (nextIndex() != 0)
 			{
 				index--;
@@ -120,7 +120,7 @@ public class SynchronizedArrayList<E>
 			{
 				throw new IllegalStateException("Operation not allowed!");
 			}
-			SynchronizedArrayList.this.set(modificationInd, eNew);
+			PreSyncArrayList.this.set(modificationInd, eNew);
 			allowed = false;
 		}
 
@@ -131,12 +131,12 @@ public class SynchronizedArrayList<E>
 			{
 				throw new IllegalStateException("Operation not allowed!");
 			}
-			SynchronizedArrayList.this.add(index, e2);
+			PreSyncArrayList.this.add(index, e2);
 			allowed = false;
 		}
 	}
 
-	public SynchronizedArrayList()
+	public PreSyncArrayList()
 	{
 		this(DEFAULT_SIZE);
 	}
@@ -146,7 +146,7 @@ public class SynchronizedArrayList<E>
 	 * to the array
 	 */
 	@SuppressWarnings("unchecked")
-	public SynchronizedArrayList(int num) throws IllegalArgumentException
+	public PreSyncArrayList(int num) throws IllegalArgumentException
 	{
 		if (num < 0 || num > Integer.MAX_VALUE - 1)
 		{
@@ -160,7 +160,7 @@ public class SynchronizedArrayList<E>
 	 * to the array
 	 */
 	@SuppressWarnings("unchecked")
-	public SynchronizedArrayList(Collection<? extends E> c) throws NullPointerException 
+	public PreSyncArrayList(Collection<? extends E> c) throws NullPointerException 
 	{
 		if (c == null)
 		{

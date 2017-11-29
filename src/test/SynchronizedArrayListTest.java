@@ -35,14 +35,23 @@ class SynchronizedArrayListTest
 	void testSynchronizedArrayListCollection()
 	{
 		ArrayList<Integer> arr = new ArrayList<>();
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < 15; i++)
 		{
 			arr.add(new Integer(i));
 		}
 		
 		array = new SynchronizedArrayList<>(arr);
-		assertEquals(5, array.size());
-		assertEquals(10, array.capacity());
+		assertEquals(15, array.size());
+		assertEquals(20, array.capacity());
+		
+		//test expansion
+		for (int i = 15; i < 150; i++)
+		{
+			arr.add(new Integer(i));
+		}
+		array = new SynchronizedArrayList<>(arr);
+		assertEquals(150, array.size());
+		assertEquals(150, array.capacity());
 	}
 	
 	@Test
@@ -354,10 +363,10 @@ class SynchronizedArrayListTest
 			array.remove(new Integer(i));
 
 			// check when reduction happens
-			if (i == 6)
+			if (i == 5)
 			{
 				assertEquals(20, array.capacity());
-			} else if (i == 7)
+			} else if (i == 6)
 			{
 				assertEquals(10, array.capacity());
 			}
