@@ -8,6 +8,11 @@ import java.util.ListIterator;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
+/**
+ * @author Sunny
+ *
+ * @param <E>
+ */
 public class SynchronizedArrayList<E>
 {
 	private E[] array;
@@ -43,7 +48,7 @@ public class SynchronizedArrayList<E>
 		}
 
 		@Override
-		public E next() throws NoSuchElementException
+		public synchronized E next() throws NoSuchElementException
 		{
 			if (index > size())
 			{
@@ -70,7 +75,7 @@ public class SynchronizedArrayList<E>
 		}
 
 		@Override
-		public E previous() throws NoSuchElementException
+		public synchronized E previous() throws NoSuchElementException
 		{
 			index--;
 			if (index < 0)
@@ -99,7 +104,7 @@ public class SynchronizedArrayList<E>
 		}
 
 		@Override
-		public void remove()
+		public synchronized void remove()
 		{
 			if (!allowed)
 			{
@@ -120,8 +125,11 @@ public class SynchronizedArrayList<E>
 			{
 				throw new IllegalStateException("Operation not allowed!");
 			}
-			SynchronizedArrayList.this.set(modificationInd, eNew);
-			allowed = false;
+			synchronized(SynchronizedArrayList.this)
+			{
+				SynchronizedArrayList.this.set(modificationInd, eNew);
+				allowed = false;
+			}
 		}
 
 		@Override
@@ -131,11 +139,17 @@ public class SynchronizedArrayList<E>
 			{
 				throw new IllegalStateException("Operation not allowed!");
 			}
-			SynchronizedArrayList.this.add(index, e2);
-			allowed = false;
+			synchronized(SynchronizedArrayList.this)
+			{
+				SynchronizedArrayList.this.add(index, e2);
+				allowed = false;
+			}
 		}
 	}
 
+	/**
+	 * 
+	 */
 	public SynchronizedArrayList()
 	{
 		this(DEFAULT_SIZE);
@@ -144,6 +158,10 @@ public class SynchronizedArrayList<E>
 	/**
 	 * SuppressWarning makes sense as only elements of type E will be added
 	 * to the array
+	 */
+	/**
+	 * @param num
+	 * @throws IllegalArgumentException
 	 */
 	@SuppressWarnings("unchecked")
 	public SynchronizedArrayList(int num) throws IllegalArgumentException
@@ -159,38 +177,51 @@ public class SynchronizedArrayList<E>
 	 * SuppressWarning makes sense as only elements of type E will be added
 	 * to the array
 	 */
+	/**
+	 * @param c
+	 * @throws NullPointerException
+	 */
 	@SuppressWarnings("unchecked")
 	public SynchronizedArrayList(Collection<? extends E> c) throws NullPointerException 
 	{
-		if (c == null)
+		synchronized (array)
 		{
-			String str = "Collection " + c + " is null";
-			throw new NullPointerException(str);
+			if (c == null)
+			{
+				String str = "Collection " + c + " is null";
+				throw new NullPointerException(str);
+			}
+			int len = DEFAULT_SIZE; //10
+			int cSize = c.size();
+			if (cSize > 10)
+			{
+				len = cSize + (cSize % 10);
+			}	
+			array = (E[]) new Object[len];
+			
+			Iterator<? extends E> it = c.iterator();
+			int i = 0;
+			while (it.hasNext())
+			{	
+				array[i] = it.next();
+				i++;
+			}
+			counter = cSize;
 		}
-		int len = DEFAULT_SIZE; //10
-		int cSize = c.size();
-		if (cSize > 10)
-		{
-			len = cSize + (cSize % 10);
-		}	
-		array = (E[]) new Object[len];
-		
-		Iterator<? extends E> it = c.iterator();
-		int i = 0;
-		while (it.hasNext())
-		{	
-			array[i] = it.next();
-			i++;
-		}
-		counter = cSize;
 	}
 	
-	public void trimToSize()
+	/**
+	 * 
+	 */
+	public synchronized void trimToSize()
 	{
 		resizeAndCopyContents(size());
 	}
 	
-	public void ensureCapacity(int minCapacity)
+	/**
+	 * @param minCapacity
+	 */
+	public synchronized void ensureCapacity(int minCapacity)
 	{
 		if (capacity() < minCapacity)
 		{
@@ -198,69 +229,119 @@ public class SynchronizedArrayList<E>
 		}
 	}
 	
+	/**
+	 * @return
+	 */
 	public int size()
 	{
 		return counter;
 	}
 	
+	/**
+	 * @return
+	 */
 	public boolean isEmpty()
 	{
 		return size() == 0 ? true : false;
 	}
 
+	/**
+	 * @param o
+	 * @return
+	 */
 	public boolean contains(Object o)
 	{
 		return indexOf(o) == -1 ? false : true;
 	}
 	
+	/**
+	 * @param o
+	 * @return
+	 */
 	public int indexOf(Object o)
 	{
-		for (int i = 0; i < size(); i++)
+		synchronized(array) 
 		{
-			if (array[i].equals(o))
+			for (int i = 0; i < size(); i++)
 			{
-				return i;
+				if (array[i].equals(o))
+				{
+					return i;
+				}
 			}
+			return NOT_FOUND;
 		}
-		return NOT_FOUND;
 	}
 	
+	/**
+	 * @param o
+	 * @return
+	 */
 	public int lastIndexOf(Object o)
 	{
-		for (int i = size() - 1; i > -1; i--)
+		synchronized(array)
 		{
-			if (array[i].equals(o))
+			for (int i = size() - 1; i > -1; i--)
 			{
-				return i;
+				if (array[i].equals(o))
+				{
+					return i;
+				}
 			}
+			return NOT_FOUND;
 		}
-		return NOT_FOUND;
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#clone()
+	 */
 	public Object clone()
 	{
-		return array.clone();
+		synchronized(array)
+		{
+			return array.clone();
+		}
 	}
 	
+	/**
+	 * @return
+	 */
 	public Object[] toArray()
 	{
-		return Arrays.copyOf(array, size());
+		synchronized(array)
+		{
+			return Arrays.copyOf(array, size());
+		}
 	}
 	
+	/**
+	 * @param a
+	 * @return
+	 * @throws ArrayStoreException
+	 * @throws NullPointerException
+	 */
 	@SuppressWarnings("unchecked")
 	public <T> T[] toArray(T[] a) throws ArrayStoreException, NullPointerException
 	{
-		int size = size();
-		if (a.length < size)
+		synchronized(array)
 		{
-            return (T[]) Arrays.copyOf(array, size, a.getClass());
+			int size = size();
+			if (a.length < size)
+			{
+	            return (T[]) Arrays.copyOf(array, size, a.getClass());
+			}
+	        System.arraycopy(array, 0, a, 0, size);
+	        if (a.length > size)
+	            a[size] = null;
+	        return a;
 		}
-        System.arraycopy(array, 0, a, 0, size);
-        if (a.length > size)
-            a[size] = null;
-        return a;
 	}
 
+	/**
+	 * @param index
+	 * @return
+	 * @throws IndexOutOfBoundsException
+	 */
 	public E get(int index) throws IndexOutOfBoundsException
 	{
 		if (index < 0 || index >= size())
@@ -271,6 +352,12 @@ public class SynchronizedArrayList<E>
 		return array[index];
 	}
 	
+	/**
+	 * @param index
+	 * @param element
+	 * @return
+	 * @throws IndexOutOfBoundsException
+	 */
 	public E set(int index, E element) throws IndexOutOfBoundsException
 	{
 		if (index < 0 || index > size())
@@ -278,92 +365,136 @@ public class SynchronizedArrayList<E>
 			String str = "Index: " + index + ", Size: " + size();
 			throw new IndexOutOfBoundsException(str);
 		}
-		E obj = array[index];
-		array[index] = element;
-		return obj;
+		synchronized(array)
+		{
+			E obj = array[index];
+			array[index] = element;
+			return obj;
+		}
 	}
 	
+	/**
+	 * @param e
+	 * @return
+	 */
 	public boolean add(E e)
 	{
-		int numOfElements = size();
-		int capacity = capacity();
-		
-		//if unable to increase capacity - return false
-		if (!rangeCheckAndIncreaseSize(numOfElements + 1, capacity))
+		synchronized(array)
 		{
-			return false;
+			int numOfElements = size();
+			int capacity = capacity();
+			
+			//if unable to increase capacity - return false
+			if (!rangeCheckAndIncreaseSize(numOfElements + 1, capacity))
+			{
+				return false;
+			}
+			
+			array[counter] = e;
+			counter++;
+			return true;
 		}
-		
-		array[counter] = e;
-		counter++;
-		return true;
 	}
 
+	/**
+	 * @param index
+	 * @param element
+	 * @throws IndexOutOfBoundsException
+	 */
 	public void add(int index, E element) throws IndexOutOfBoundsException
 	{
-		int size = size();
-		if (index < 0 || index > size)
+		synchronized(array)
 		{
-			throw new IndexOutOfBoundsException();
+			int size = size();
+			if (index < 0 || index > size)
+			{
+				throw new IndexOutOfBoundsException();
+			}
+			rangeCheckAndIncreaseSize(size + 1, capacity());
+			for (int i = size; i > index; i--)
+			{
+				array[i] = array[i - 1];
+			}
+			array[index] = element;
+			counter++;
 		}
-		rangeCheckAndIncreaseSize(size + 1, capacity());
-		for (int i = size; i > index; i--)
-		{
-			array[i] = array[i - 1];
-		}
-		array[index] = element;
-		counter++;
 	}
 	
+	/**
+	 * @param index
+	 * @return
+	 * @throws IndexOutOfBoundsException
+	 */
 	public E remove(int index) throws IndexOutOfBoundsException
 	{
-		int size = size();
-		if (index > size)
+		synchronized(array)
 		{
-			String str = "Index: " + index + ", Size: " + size;
-			throw new IndexOutOfBoundsException(str);
-		}
-		
-		E obj = array[index];
-		for (int i = index; i < size - 1; i++)
-		{
-			array[i] = array[i + 1];
-		}
-		array[size - 1] = null;
-		counter--;
-
-		size = size();
-		rangeCheckAndDecreaseSize(size, capacity());
-		return obj;
-	}
-	
-	public boolean remove(Object o)
-	{
-		int index = -1;
-		index = indexOf(o);
-		if (index != -1)
-		{
-			counter--;
-			for (int i = index; i < size(); i++)
+			int size = size();
+			if (index > size)
+			{
+				String str = "Index: " + index + ", Size: " + size;
+				throw new IndexOutOfBoundsException(str);
+			}
+			
+			E obj = array[index];
+			for (int i = index; i < size - 1; i++)
 			{
 				array[i] = array[i + 1];
 			}
-			
-			array[size()] = null;
-			
-			rangeCheckAndDecreaseSize(size(), capacity());
-			return true;
+			array[size - 1] = null;
+			counter--;
+	
+			size = size();
+			rangeCheckAndDecreaseSize(size, capacity());
+			return obj;
 		}
-		return false;
 	}
 	
+	/**
+	 * @param o
+	 * @return
+	 */
+	public boolean remove(Object o)
+	{
+		synchronized(array)
+		{
+			int index = -1;
+			index = indexOf(o);
+			if (index != -1)
+			{
+				counter--;
+				for (int i = index; i < size(); i++)
+				{
+					array[i] = array[i + 1];
+				}
+				
+				array[size()] = null;
+				
+				rangeCheckAndDecreaseSize(size(), capacity());
+				return true;
+			}
+			return false;
+		}
+	}
+	
+	/**
+	 * 
+	 */
 	@SuppressWarnings("unchecked")
 	public void clear()
 	{
-		array = (E[]) new Object[DEFAULT_SIZE];
-		counter = 0;
+		synchronized(array)
+		{
+			array = (E[]) new Object[DEFAULT_SIZE];
+			counter = 0;
+		}
 	}
 	
+	/**
+	 * @param c
+	 * @return
+	 * @throws NullPointerException
+	 */
 	public boolean addAll(Collection<? extends E> c) throws NullPointerException
 	{
 		if (c == null)
@@ -371,34 +502,36 @@ public class SynchronizedArrayList<E>
 			String str = "Collection " + c + " is null";
 			throw new NullPointerException(str);
 		}
-		
-		int size = size();
-		int cSize = c.size();
-		
-		//resize array to accommodate c
-		while (true)
+		synchronized(array)
 		{
-			if (!rangeCheckAndIncreaseSize(size + cSize, capacity()))
+			int size = size();
+			int cSize = c.size();
+			
+			//resize array to accommodate c
+			while (true)
 			{
-				return false;
+				if (!rangeCheckAndIncreaseSize(size + cSize, capacity()))
+				{
+					return false;
+				}
+				if (size + cSize <= capacity())
+				{
+					break;
+				}
 			}
-			if (size + cSize <= capacity())
+			
+			Iterator<? extends E> iterator = c.iterator();
+			while (iterator.hasNext())
 			{
-				break;
+				array[size] = iterator.next();
+				size++;
 			}
+			counter = size;
+			return true;
 		}
-		
-		Iterator<? extends E> iterator = c.iterator();
-		while (iterator.hasNext())
-		{
-			array[size] = iterator.next();
-			size++;
-		}
-		counter = size;
-		return true;
 	}
 	
-	public boolean addAll(int index, Collection<? extends E> c) throws NullPointerException, IndexOutOfBoundsException 
+	public synchronized boolean addAll(int index, Collection<? extends E> c) throws NullPointerException, IndexOutOfBoundsException 
 	{
 		if (c == null)
 		{
@@ -450,7 +583,12 @@ public class SynchronizedArrayList<E>
 		return true;
 	}
 	
-	public void removeRange(int fromIndex, int toIndex) throws IndexOutOfBoundsException
+	/**
+	 * @param fromIndex
+	 * @param toIndex
+	 * @throws IndexOutOfBoundsException
+	 */
+	public synchronized void removeRange(int fromIndex, int toIndex) throws IndexOutOfBoundsException
 	{
 		int size = size();
 		if (fromIndex < 0)
@@ -503,6 +641,12 @@ public class SynchronizedArrayList<E>
 		}
 	}
 	
+	/**
+	 * @param c
+	 * @return
+	 * @throws NullPointerException
+	 * @throws ClassCastException
+	 */
 	public boolean removeAll(Collection<?> c) throws NullPointerException, ClassCastException
 	{
 		if (c == null) 
@@ -513,40 +657,46 @@ public class SynchronizedArrayList<E>
 		
 		//not using remove method because of constant resizing
 		// this method utilizes assignment instead of allocating smaller array and copying over elements
-		
-		boolean changed = false;
-		int size = size();
-		
-		Set<Integer> indices = new HashSet<>();
-		
-		for (int index = 0; index < size; index++)
+		synchronized(array)
 		{
-			if (!c.contains(array[index]))
+			boolean changed = false;
+			int size = size();
+			
+			Set<Integer> indices = new HashSet<>();
+			
+			for (int index = 0; index < size; index++)
 			{
-				indices.add(index);
-			} else {
-				if (!changed)
+				if (!c.contains(array[index]))
 				{
-					changed = true;
+					indices.add(index);
+				} else {
+					if (!changed)
+					{
+						changed = true;
+					}
+					counter-=1;
 				}
-				counter-=1;
 			}
+			
+			@SuppressWarnings("unchecked")
+			E[] tempArr = (E[]) new Object[indices.size()];
+			Iterator<Integer> indIt = indices.iterator();
+			int travel = 0;
+			
+			while (indIt.hasNext())
+			{
+				tempArr[travel] = array[indIt.next()];
+				travel++;
+			}
+			array = tempArr;
+			return changed;
 		}
-		
-		@SuppressWarnings("unchecked")
-		E[] tempArr = (E[]) new Object[indices.size()];
-		Iterator<Integer> indIt = indices.iterator();
-		int travel = 0;
-		
-		while (indIt.hasNext())
-		{
-			tempArr[travel] = array[indIt.next()];
-			travel++;
-		}
-		array = tempArr;
-		return changed;
 	}
 	
+	/**
+	 * @param c
+	 * @return
+	 */
 	public boolean retainAll(Collection<?> c)
 	{
 		if (c == null) 
@@ -557,40 +707,47 @@ public class SynchronizedArrayList<E>
 		
 		//not using remove method because of constant resizing
 		// this method utilizes assignment instead of allocating smaller array and copying over elements
-		
-		boolean changed = false;
-		int size = size();
-		counter = 0;
-		
-		Set<Integer> indices = new HashSet<>();
-		
-		for (int index = 0; index < size; index++)
+		synchronized(array)
 		{
-			if (c.contains(array[index]))
+			boolean changed = false;
+			int size = size();
+			counter = 0;
+			
+			Set<Integer> indices = new HashSet<>();
+			
+			for (int index = 0; index < size; index++)
 			{
-				indices.add(index);
-				if (!changed)
+				if (c.contains(array[index]))
 				{
-					changed = true;
+					indices.add(index);
+					if (!changed)
+					{
+						changed = true;
+					}
+					counter++;
 				}
-				counter++;
 			}
+			
+			@SuppressWarnings("unchecked")
+			E[] tempArr = (E[]) new Object[indices.size()];
+			Iterator<Integer> indIt = indices.iterator();
+			int travel = 0;
+			
+			while (indIt.hasNext())
+			{
+				tempArr[travel] = array[indIt.next()];
+				travel++;
+			}
+			array = tempArr;
+			return changed;
 		}
-		
-		@SuppressWarnings("unchecked")
-		E[] tempArr = (E[]) new Object[indices.size()];
-		Iterator<Integer> indIt = indices.iterator();
-		int travel = 0;
-		
-		while (indIt.hasNext())
-		{
-			tempArr[travel] = array[indIt.next()];
-			travel++;
-		}
-		array = tempArr;
-		return changed;
 	}
 
+	/**
+	 * @param index
+	 * @return
+	 * @throws IndexOutOfBoundsException
+	 */
 	public ListIterator<E> listIterator(int index) throws IndexOutOfBoundsException
 	{
 		if (index < 0 || index > size())
@@ -598,14 +755,26 @@ public class SynchronizedArrayList<E>
 			String str = "Index: " + index;
 			throw new IndexOutOfBoundsException(str);
 		}
-		return new ListIterSub(index);
+		synchronized(array)
+		{
+			return new ListIterSub(index);
+		}
 	}
 	
+	/**
+	 * @return
+	 */
 	public ListIterator<E> listIterator()
 	{
-		return new ListIterSub();
+		synchronized(array)
+		{
+			return new ListIterSub();
+		}
 	}
 	
+	/**
+	 * @return
+	 */
 	public Iterator<E> iterator()
 	{
 		Iterator<E> it = new Iterator<E>()
@@ -633,7 +802,17 @@ public class SynchronizedArrayList<E>
 		return it;
 	}
 	
-	public SynchronizedArrayList<E> subList(int fromIndex, int toIndex)
+	/**
+	 * Returns a subist view of the SynchronizedArrayList object ranging from
+	 * @param fromIndex to @param toIndex
+	 * 
+	 * @param fromIndex starting index of sublist
+	 * @param toIndex end index of sublist, inclusive
+	 * @return
+	 * @throws IndexOutOfBoundsException if ({@code fromIndex < 0 || toIndex > size()})
+	 * @throws IllegalArgumentException if ({@code fromIndex > toIndex})
+	 */
+	public synchronized SynchronizedArrayList<E> subList(int fromIndex, int toIndex)
 			throws IndexOutOfBoundsException, IllegalArgumentException
 	{
 		if (fromIndex > toIndex)
@@ -660,12 +839,22 @@ public class SynchronizedArrayList<E>
 		return sal;
 	}
 	
-	public int capacity()
+	/**
+	 * Returns array length
+	 * 
+	 * @return array length
+	 */
+	public synchronized int capacity()
 	{
 		return array.length;
 	}
 
-	public String toString()
+	/** 
+	 * Returns a proper representation of SynchronizedArrayList
+	 * 
+	 * @return String representation of SynchronizedArrayList
+	 */
+	public synchronized String toString()
 	{
 		int length = size();
 		StringBuffer sb = new StringBuffer();
@@ -682,7 +871,14 @@ public class SynchronizedArrayList<E>
 		return sb.toString();
 	}
 	
-	private boolean rangeCheckAndIncreaseSize(int i, int size)
+	/**
+	 * Increases array size if doubled array length < Integer.MAX_VALUE
+	 * 
+	 * @param i number of elements
+	 * @param size array length
+	 * @return true if resized, false otherwise
+	 */
+	private synchronized boolean rangeCheckAndIncreaseSize(int i, int size)
 	{
 		if (i > size)
 		{
@@ -696,7 +892,13 @@ public class SynchronizedArrayList<E>
 		return true;
 	}
 	
-	private void rangeCheckAndDecreaseSize(int size, int capacity)
+	/**
+	 * Checks if size of array can be halved and resizes it
+	 * 
+	 * @param size number of elements in array
+	 * @param capacity array length
+	 */
+	private synchronized void rangeCheckAndDecreaseSize(int size, int capacity)
 	{
 		if (size * 2 <= capacity && capacity >= 10)
 		{
@@ -704,11 +906,19 @@ public class SynchronizedArrayList<E>
 		}
 	}
 	
+	/**
+	 * Resized the array to @param size
+	 * 
+	 * Not synchronized because each caller of this function
+	 * is synchronized on array object
+	 * 
+	 * @param newSize new array size
+	 */
 	private void resizeAndCopyContents(int newSize)
 	{
 		/**
-		 * Suppress Warning makes sense as only elements
-		 * of type E are added
+		 * Suppress Warning makes sense as 
+		 * only elements of type E are added
 		 */
 		@SuppressWarnings("unchecked")
 		E[] tempArr = (E[]) new Object[newSize];

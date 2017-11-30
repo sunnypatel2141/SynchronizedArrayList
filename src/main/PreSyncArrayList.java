@@ -316,7 +316,7 @@ public class PreSyncArrayList<E>
 	}
 	
 	public E remove(int index) throws IndexOutOfBoundsException
-	{
+	{	
 		int size = size();
 		if (index > size)
 		{
