@@ -43,9 +43,9 @@ public class CaliperTestSynchronized extends SimpleBenchmark
 				public void run()
 				{
 					List<Point> list = new ArrayList<>();
-					for (int i = 2; i < DEFAULT_LEN; i++)
+					for (int k = 2; k < DEFAULT_LEN; k++)
 					{
-						list.add(new Point(i, i, i));
+						list.add(new Point(k, k, k));
 					}
 					array.addAll(list);
 				}
