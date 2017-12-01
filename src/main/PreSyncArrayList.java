@@ -285,7 +285,6 @@ public class PreSyncArrayList<E>
 	
 	public boolean add(E e)
 	{
-		System.out.println("1");
 		int numOfElements = size();
 		int capacity = capacity();
 		
@@ -296,13 +295,12 @@ public class PreSyncArrayList<E>
 		}
 		
 		array[counter] = e;
-		counter++;		System.out.println("2");
+		counter++;
 		return true;
 	}
 
 	public void add(int index, E element) throws IndexOutOfBoundsException
 	{
-		System.out.println("3");
 		int size = size();
 		if (index < 0 || index > size)
 		{
@@ -315,7 +313,6 @@ public class PreSyncArrayList<E>
 		}
 		array[index] = element;
 		counter++;
-		System.out.println("4");
 	}
 	
 	public E remove(int index) throws IndexOutOfBoundsException
@@ -369,7 +366,6 @@ public class PreSyncArrayList<E>
 	
 	public boolean addAll(Collection<? extends E> c) throws NullPointerException
 	{
-		System.out.println("5");
 		if (c == null)
 		{
 			String str = "Collection " + c + " is null";
@@ -399,8 +395,6 @@ public class PreSyncArrayList<E>
 			size++;
 		}
 		counter = size;
-
-		System.out.println("6");
 		return true;
 	}
 	

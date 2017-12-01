@@ -61,10 +61,10 @@ public class CaliperTestSynchronized extends SimpleBenchmark
 				thread2.join();
 				thread3.join();
 
-				for (int j = 0; j < DEFAULT_LEN; j++)
-				{
-					assertTrue(array.contains(new Point(j, j, j)));
-				}
+//				for (int j = 0; j < DEFAULT_LEN; j++)
+//				{
+//					assertTrue(array.contains(new Point(j, j, j)));
+//				}
 			} catch (InterruptedException e)
 			{
 				e.printStackTrace();
@@ -72,35 +72,51 @@ public class CaliperTestSynchronized extends SimpleBenchmark
 		}
 	}
 	
-	
-
-	// public void timeInstantiateParam(int reps) {
-	// for (int i = 0; i < reps; i++) {
-	// preSyncArray = new PreSyncArrayList<>(100);
-	// for (int j = 0; j < DEFAULT_LEN; j++)
-	// {
-	// preSyncArray.add(new Point(j, j, j));
-	// }
-	// }
-	// }
-	//
-	// public void timeInstantiateParamCollection(int reps) {
-	// for (int i = 0; i < reps; i++) {
-	// ArrayList<Point> list = new ArrayList<>();
-	// for (int j = 0; j < DEFAULT_LEN; j++)
-	// {
-	// list.add(new Point(j, j, j));
-	// }
-	// preSyncArray = new PreSyncArrayList<>(list);
-	// }
-	// }
-	//
-
-	// public void timeSystemTime(int reps) {
-	// for (int i = 0; i < reps; i++) {
-	// System.currentTimeMillis();
-	// }
-	// }
+	public void timeInstantiateSet(int reps)
+	{
+		for (int i = 0; i < reps; i++)
+		{
+			array = new SynchronizedArrayList<>();
+			for (int j = 0; j < DEFAULT_LEN; j++)
+			{
+				array.add(new Point(j, j, j));
+			}
+			
+			Thread thread = new Thread()
+			{
+				public void run()
+				{
+					for (int k = 2 * DEFAULT_LEN; k > DEFAULT_LEN; k--)
+					{
+						array.set(k - DEFAULT_LEN, new Point(k, k, k));
+					}
+				}
+			};
+			Thread thread2 = new Thread()
+			{
+				public void run()
+				{
+					for (int k = DEFAULT_LEN; k < 2 * DEFAULT_LEN; k++)
+					{
+						int val = k * 3;
+						array.set(k - DEFAULT_LEN, new Point(val, val, val));
+					}
+				}
+			};
+			
+			try
+			{
+				thread2.start();
+				thread.start();
+				
+				thread.join();
+				thread2.join();
+			} catch (InterruptedException e)
+			{
+				e.printStackTrace();
+			}
+		}
+	}
 
 	public static void main(String[] args)
 	{

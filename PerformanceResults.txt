@@ -1,0 +1,24 @@
+Sync
+
+0% Scenario{vm=java, trial=0, benchmark=InstantiateAdd} 252874.76 ns; σ=29912.91 ns @ 10 trials
+50% Scenario{vm=java, trial=0, benchmark=InstantiateSet} 178520.26 ns; σ=1058.09 ns @ 3 trials
+
+     benchmark  us linear runtime
+InstantiateAdd 253 ==============================
+InstantiateSet 179 =====================
+
+vm: java
+trial: 0
+ 
+=============================================
+ 
+Pre	
+0% Scenario{vm=java, trial=0, benchmark=InstantiateAdd} 245451.29 ns; σ=15489.67 ns @ 10 trials
+50% Scenario{vm=java, trial=0, benchmark=InstantiateSet} 242481.55 ns; σ=26278.97 ns @ 10 trials
+
+     benchmark  us linear runtime
+InstantiateAdd 245 ==============================
+InstantiateSet 242 =============================
+
+vm: java
+trial: 0

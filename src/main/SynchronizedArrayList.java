@@ -236,7 +236,7 @@ public class SynchronizedArrayList<E>
 	 * 
 	 * @return number of elements
 	 */
-	public int size()
+	public synchronized int size()
 	{
 		return counter;
 	}
@@ -408,19 +408,16 @@ public class SynchronizedArrayList<E>
 	 *             if the index is out of range
 	 *             ({@code index < 0 || index >= size()})
 	 */
-	public E set(int index, E element) throws IndexOutOfBoundsException
+	public synchronized E set(int index, E element) throws IndexOutOfBoundsException
 	{
 		if (index < 0 || index > size())
 		{
 			String str = "Index: " + index + ", Size: " + size();
 			throw new IndexOutOfBoundsException(str);
 		}
-		synchronized (array)
-		{
-			E obj = array[index];
-			array[index] = element;
-			return obj;
-		}
+		E obj = array[index];
+		array[index] = element;
+		return obj;
 	}
 
 	/**
