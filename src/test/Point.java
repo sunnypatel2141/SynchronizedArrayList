@@ -49,4 +49,15 @@ public class Point {
   public String toString() {
 	  return "[" + new Double(getX()) + ", " + new Double(getY()) + ", " + new Double(getZ()) + "]";  
   }
+  
+  @Override
+  public boolean equals(Object o) {
+      if (o == null) {
+          return false;
+      }
+      if (!(o instanceof Point)) {
+          return false;
+      }
+      return (x == ((Point) o).x && y == ((Point) o).y && z == ((Point) o).z);
+  }
 }
