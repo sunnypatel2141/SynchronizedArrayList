@@ -6,9 +6,6 @@ import java.util.List;
 import com.google.caliper.Runner;
 import com.google.caliper.SimpleBenchmark;
 
-import main.PreSyncArrayList;
-import main.SynchronizedArrayList;
-
 public class CaliperTestArrayList extends SimpleBenchmark
 {
 
