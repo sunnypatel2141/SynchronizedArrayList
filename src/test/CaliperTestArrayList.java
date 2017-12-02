@@ -260,6 +260,17 @@ public class CaliperTestArrayList extends SimpleBenchmark
 		}
 	}
 	
+	public void timeSublist(int reps)
+	{
+		for (int i = 0; i < reps; i++)
+		{
+			for (int k = 0; k < 10; k++)
+			{
+				array.subList(0, k);
+			}
+		}
+	}
+	
 	public static void main(String[] args)
 	{
 		Runner.main(CaliperTestArrayList.class, args);

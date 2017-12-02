@@ -5,7 +5,8 @@ SynchronizedArrayList
 				CompareSetMultiThreaded	186	==
 						CompareRemove	351	=====
 					CompareRemoveAll...	244	===
-					SearchInLargeArray	1924	==============================
+					SearchInLargeArray	1924	===
+								subList	528 ns	==============================
 
 ==========================================================================================
 
@@ -16,15 +17,17 @@ ArrayList
 				CompareSetMultiThreaded	225	==
 						CompareRemove	273	=====
 					CompareRemoveAll...	235	===
-					SearchInLargeArray	2132	==============================
+					SearchInLargeArray	2132	===
+								subList	4.03 ns ==============================
 			
 ==========================================================================================
 
 Vector
 
-										benchmark	us	linear runtime
+							benchmark	us	linear runtime
 					OverloadedAddCompare	257	===
 				CompareSetMultiThreaded	190	==
 						CompareRemove	329	=====
 					CompareRemoveAll...	295	===
-					SearchInLargeArray	2140	==============================
+					SearchInLargeArray	2140	===
+					SearchInLargeArray	64 ns ==============================
