@@ -266,8 +266,7 @@ public class SynchronizedArrayList<E>
 	/**
 	 * Returns index of first occurrence of Object o
 	 * 
-	 * @param o
-	 *            Object to search index of
+	 * @param o Object to search index of
 	 * @return position of the Object o in {@link SynchronizedArrayList}
 	 */
 	public synchronized int indexOf(Object o)
@@ -285,8 +284,7 @@ public class SynchronizedArrayList<E>
 	/**
 	 * Returns the index of last occurrence of passed-in object
 	 * 
-	 * @param o
-	 *            Object to determine index of
+	 * @param o Object to determine index of
 	 * @return index of specified object
 	 */
 	public int lastIndexOf(Object o)
@@ -379,8 +377,7 @@ public class SynchronizedArrayList<E>
 	/**
 	 * Returns object at the specified at index
 	 * 
-	 * @param index
-	 *            index of the element to return
+	 * @param index index of the element to return
 	 * @return object at the specified index
 	 * @throws ArrayIndexOutOfBoundsException
 	 *             if the index is out of range
@@ -399,10 +396,8 @@ public class SynchronizedArrayList<E>
 	/**
 	 * Replaces the element at the specified position with the specified element.
 	 *
-	 * @param index
-	 *            index of the element to replace
-	 * @param element
-	 *            element to be stored at the specified position
+	 * @param index index of the element to replace
+	 * @param element element to be stored at the specified position
 	 * @return the element previously at the specified position
 	 * @throws ArrayIndexOutOfBoundsException
 	 *             if the index is out of range
@@ -423,8 +418,7 @@ public class SynchronizedArrayList<E>
 	/**
 	 * Adds to {@link SynchronizedArrayList} element passed-in
 	 * 
-	 * @param e
-	 *            element to be added at end of array
+	 * @param e element to be added at end of array
 	 * @return true if added successfully, false otherwise
 	 */
 	public synchronized boolean add(E e)
@@ -446,10 +440,8 @@ public class SynchronizedArrayList<E>
 	/**
 	 * Adds to the {@link SynchronizedArrayList} element at specified index
 	 * 
-	 * @param index
-	 *            position at which element will be added
-	 * @param element
-	 *            object to be added
+	 * @param index position at which element will be added
+	 * @param element object to be added
 	 * @throws IndexOutOfBoundsException
 	 *             if ({@code index < 0 || index > size()})
 	 */
@@ -472,8 +464,7 @@ public class SynchronizedArrayList<E>
 	/**
 	 * Removes from {@link SynchronizedArrayList} the element at passed-in index
 	 * 
-	 * @param index
-	 *            position of element to be removed
+	 * @param index position of element to be removed
 	 * @return true if removed successfully, false otherwise
 	 * @throws IndexOutOfBoundsException
 	 *             if ({@code index < 0 || index > size()})
@@ -503,8 +494,7 @@ public class SynchronizedArrayList<E>
 	/**
 	 * Removes from {@link SynchronizedArrayList} the passed-in object
 	 * 
-	 * @param o
-	 *            element to be removed
+	 * @param o element to be removed
 	 * @return true if removed successfully, false otherwise
 	 */
 	public synchronized boolean remove(Object o)
@@ -543,8 +533,7 @@ public class SynchronizedArrayList<E>
 	/**
 	 * Adds elements from Collection c to SynchronizedArrayList
 	 * 
-	 * @param c
-	 *            Collection
+	 * @param c Collection
 	 * @return true if added successfully, false otherwise
 	 * @throws NullPointerException
 	 *             if ({@code c == null})
@@ -585,10 +574,8 @@ public class SynchronizedArrayList<E>
 	/**
 	 * Adds elements from Collection c to SynchronizedArrayList starting at index
 	 * 
-	 * @param index
-	 *            position to insert elements from Collection c
-	 * @param c
-	 *            Collection
+	 * @param index position to insert elements from Collection c
+	 * @param c Collection
 	 * @return true if added successfully, false otherwise
 	 * @throws NullPointerException
 	 *             if ({@code c == null})
@@ -649,16 +636,13 @@ public class SynchronizedArrayList<E>
 	}
 
 	/**
-	 * Removes from {@link SynchronizedArrayList} elements starting at @code
-	 * fromIndex to @code toIndex, inclusive
+	 * Removes from {@link SynchronizedArrayList} elements starting at @param
+	 * fromIndex to @param toIndex, inclusive
 	 * 
-	 * @param fromIndex
-	 *            starting point of remove range
-	 * @param toIndex
-	 *            end point of removal
+	 * @param fromIndex starting point of remove range
+	 * @param toIndex end point of removal
 	 * @throws IndexOutOfBoundsException
-	 *             if ({@code fromIndex < 0 || toIndex > size || 
-	 * 										fromIndex >= size || toIndex < fromIndex})
+	 *             if ({@code fromIndex < 0 || toIndex > size || fromIndex >= size || toIndex < fromIndex})
 	 */
 	public synchronized void removeRange(int fromIndex, int toIndex) throws IndexOutOfBoundsException
 	{
@@ -716,11 +700,9 @@ public class SynchronizedArrayList<E>
 	/**
 	 * Removes from {@link SynchronizedArrayList} elements in Collection c
 	 * 
-	 * @param c
-	 *            Collection
+	 * @param c Collection
 	 * @return true if element(s) changed in {@link SynchronizedArrayList}
-	 * @throws NullPointerException
-	 *             if ({@code c==null})
+	 * @throws NullPointerException if ({@code c==null})
 	 * @throws ClassCastException
 	 */
 	public synchronized boolean removeAll(Collection<?> c) throws NullPointerException, ClassCastException
@@ -769,8 +751,7 @@ public class SynchronizedArrayList<E>
 	 * Retains only the elements common to Collection c and SynchronizedArrayList
 	 * object
 	 * 
-	 * @param c
-	 *            Collection
+	 * @param c Collection
 	 * @return return true if common element(s) found
 	 */
 	public synchronized boolean retainAll(Collection<?> c)
@@ -818,8 +799,7 @@ public class SynchronizedArrayList<E>
 	 * Returns a ListIterator over {@link SynchronizedArrayList} starting at
 	 * index @param index
 	 *
-	 * @param index
-	 *            starting point of traversal
+	 * @param index starting point of traversal
 	 * @return list iterator
 	 * @throws IndexOutOfBoundsException
 	 *             if ({@code index < 0 || index > size()})
@@ -884,20 +864,13 @@ public class SynchronizedArrayList<E>
 
 	/**
 	 * Returns a subist view of the {@link SynchronizedArrayList} object ranging
-	 * from
+	 * from @param fromIndex to @param toIndex
 	 * 
-	 * @param fromIndex
-	 *            to @param toIndex
-	 * 
-	 * @param fromIndex
-	 *            starting index of sublist
-	 * @param toIndex
-	 *            end index of sublist, inclusive
+	 * @param fromIndex starting index of sublist
+	 * @param toIndex end index of sublist, inclusive
 	 * @return
-	 * @throws IndexOutOfBoundsException
-	 *             if ({@code fromIndex < 0 || toIndex > size()})
-	 * @throws IllegalArgumentException
-	 *             if ({@code fromIndex > toIndex})
+	 * @throws IndexOutOfBoundsException if ({@code fromIndex < 0 || toIndex > size()})
+	 * @throws IllegalArgumentException if ({@code fromIndex > toIndex})
 	 */
 	public synchronized SynchronizedArrayList<E> subList(int fromIndex, int toIndex)
 			throws IndexOutOfBoundsException, IllegalArgumentException
@@ -961,10 +934,8 @@ public class SynchronizedArrayList<E>
 	/**
 	 * Increases array size if doubled array length < Integer.MAX_VALUE
 	 * 
-	 * @param i
-	 *            number of elements
-	 * @param size
-	 *            array length
+	 * @param i number of elements
+	 * @param size array length
 	 * @return true if resized, false otherwise
 	 */
 	private synchronized boolean rangeCheckAndIncreaseSize(int i, int size)
@@ -984,10 +955,8 @@ public class SynchronizedArrayList<E>
 	/**
 	 * Checks if size of array can be halved and resizes it
 	 * 
-	 * @param size
-	 *            number of elements in array
-	 * @param capacity
-	 *            array length
+	 * @param size number of elements in array
+	 * @param capacity array length
 	 */
 	private void rangeCheckAndDecreaseSize(int size, int capacity)
 	{

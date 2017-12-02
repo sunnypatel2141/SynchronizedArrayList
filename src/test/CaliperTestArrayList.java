@@ -10,7 +10,12 @@ import com.google.caliper.SimpleBenchmark;
 public class CaliperTestArrayList extends SimpleBenchmark
 {
 	private static final int TEN_THOUSAND = 10000;
-	private ArrayList<Point> array = new ArrayList<Point>() {{
+	private ArrayList<Point> array = new ArrayList<Point>() {/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+	{
 	    add(new Point(0, 0, 0));
 	    add(new Point(1, 1, 1));
 	    add(new Point(2, 2, 2));
