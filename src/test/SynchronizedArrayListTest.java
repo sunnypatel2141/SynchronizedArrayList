@@ -324,6 +324,8 @@ class SynchronizedArrayListTest
 	@Test
 	void testRemove()
 	{
+		array = new SynchronizedArrayList<>();
+		assertThrows(IndexOutOfBoundsException.class, ()->array.remove(0));
 		array = InstantiateAndPopulate(len);
 		
 		assertEquals("[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]", array.toString());

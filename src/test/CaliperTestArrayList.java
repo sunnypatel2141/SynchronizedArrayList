@@ -1,8 +1,5 @@
 package test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,19 +7,21 @@ import com.google.caliper.Runner;
 import com.google.caliper.SimpleBenchmark;
 
 import main.PreSyncArrayList;
+import main.SynchronizedArrayList;
 
-public class CaliperTestPreSync extends SimpleBenchmark
+public class CaliperTestArrayList extends SimpleBenchmark
 {
 
-	private PreSyncArrayList<Point> array;
-	private static int DEFAULT_LEN = 5;
+	private ArrayList<Point> array;
+	private static int DEFAULT_LEN = 100;
+	private static int MILLION = 1000000;
 //	private static String str = "[[0.0, 0.0, 0.0], [1.0, 1.0, 1.0], [2.0, 2.0, 2.0], [3.0, 3.0, 3.0], [4.0, 4.0, 4.0]]";
 
 	public void timeInstantiateAdd(int reps)
 	{
 		for (int i = 0; i < reps; i++)
 		{
-			array = new PreSyncArrayList<>();
+			array = new ArrayList<>();
 
 			Thread thread = new Thread()
 			{
@@ -71,7 +70,7 @@ public class CaliperTestPreSync extends SimpleBenchmark
 	{
 		for (int i = 0; i < reps; i++)
 		{
-			array = new PreSyncArrayList<>();
+			array = new ArrayList<>();
 			for (int j = 0; j < DEFAULT_LEN; j++)
 			{
 				array.add(new Point(j, j, j));
@@ -81,7 +80,7 @@ public class CaliperTestPreSync extends SimpleBenchmark
 			{
 				public void run()
 				{
-					for (int k = 2 * DEFAULT_LEN; k > DEFAULT_LEN; k--)
+					for (int k = 2 * DEFAULT_LEN - 1; k > DEFAULT_LEN; k--)
 					{
 						array.set(k - DEFAULT_LEN, new Point(k, k, k));
 					}
@@ -114,8 +113,81 @@ public class CaliperTestPreSync extends SimpleBenchmark
 		}
 	}
 	
+	public void timeInstantiateRemove(int reps)
+	{
+		for (int i = 0; i < reps; i++)
+		{
+			array = new ArrayList<>();
+			for (int j = 0; j < DEFAULT_LEN; j++)
+			{
+				array.add(new Point(j, j, j));
+			}
+			
+			Thread thread = new Thread()
+			{
+				public void run()
+				{
+					while (!array.isEmpty())
+					{
+						array.remove(0);
+					}
+				}
+			};
+			
+			Thread thread2 = new Thread()
+			{
+				public void run()
+				{
+					for (int j = 0; j < DEFAULT_LEN; j++)
+					{
+						array.add(new Point(j, j, j));
+					}
+				}
+			};
+			
+			Thread thread3 = new Thread()
+			{
+				public void run()
+				{
+					for (int j = 0; j < DEFAULT_LEN; j++)
+					{
+						array.remove(new Point(j, j, j));
+					}
+				}
+			};
+			
+			try
+			{
+				thread.start();
+				thread.join();
+				
+				thread2.start();
+				thread2.join();
+				
+				thread3.start();
+				thread3.join();
+				
+			} catch (InterruptedException e)
+			{
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void timeInstantiateLimits(int reps)
+	{
+		for (int i = 0; i < reps; i++)
+		{
+			array = new ArrayList<>();
+			for (int j = 0; j < MILLION; j++)
+			{
+				array.add(new Point(j, j, j));
+			}
+		}
+	}
+	
 	public static void main(String[] args)
 	{
-		Runner.main(CaliperTestPreSync.class, args);
+		Runner.main(CaliperTestArrayList.class, args);
 	}
 }

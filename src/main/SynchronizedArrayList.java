@@ -410,7 +410,7 @@ public class SynchronizedArrayList<E>
 	 */
 	public synchronized E set(int index, E element) throws IndexOutOfBoundsException
 	{
-		if (index < 0 || index > size())
+		if (index < 0 || index >= size())
 		{
 			String str = "Index: " + index + ", Size: " + size();
 			throw new IndexOutOfBoundsException(str);
@@ -429,18 +429,18 @@ public class SynchronizedArrayList<E>
 	 */
 	public synchronized boolean add(E e)
 	{
-			int numOfElements = size();
-			int capacity = capacity();
+		int numOfElements = size();
+		int capacity = capacity();
 
-			// if unable to increase capacity - return false
-			if (!rangeCheckAndIncreaseSize(numOfElements + 1, capacity))
-			{
-				return false;
-			}
+		// if unable to increase capacity - return false
+		if (!rangeCheckAndIncreaseSize(numOfElements + 1, capacity))
+		{
+			return false;
+		}
 
-			array[counter] = e;
-			counter++;
-			return true;
+		array[counter] = e;
+		counter++;
+		return true;
 	}
 
 	/**
@@ -480,26 +480,24 @@ public class SynchronizedArrayList<E>
 	 */
 	public synchronized E remove(int index) throws IndexOutOfBoundsException
 	{
-			System.out.println("Here 3");
-			int size = size();
-			if (index < 0 || index > size)
-			{
-				String str = "Index: " + index + ", Size: " + size;
-				throw new IndexOutOfBoundsException(str);
-			}
+		int size = size();
+		if (index < 0 || index >= size)
+		{
+			String str = "Index: " + index + ", Size: " + size;
+			throw new IndexOutOfBoundsException(str);
+		}
 
-			E obj = array[index];
-			for (int i = index; i < size - 1; i++)
-			{
-				array[i] = array[i + 1];
-			}
-			array[size - 1] = null;
-			counter--;
+		E obj = array[index];
+		for (int i = index; i < size - 1; i++)
+		{
+			array[i] = array[i + 1];
+		}
+		array[size - 1] = null;
+		counter--;
 
-			size = size();
-			rangeCheckAndDecreaseSize(size, capacity());
-			System.out.println("Here 4");
-			return obj;
+		size = size();
+		rangeCheckAndDecreaseSize(size, capacity());
+		return obj;
 	}
 
 	/**
@@ -509,27 +507,24 @@ public class SynchronizedArrayList<E>
 	 *            element to be removed
 	 * @return true if removed successfully, false otherwise
 	 */
-	public boolean remove(Object o)
+	public synchronized boolean remove(Object o)
 	{
-		synchronized (array)
+		int index = -1;
+		index = indexOf(o);
+		if (index != -1)
 		{
-			int index = -1;
-			index = indexOf(o);
-			if (index != -1)
+			counter--;
+			for (int i = index; i < size(); i++)
 			{
-				counter--;
-				for (int i = index; i < size(); i++)
-				{
-					array[i] = array[i + 1];
-				}
-
-				array[size()] = null;
-
-				rangeCheckAndDecreaseSize(size(), capacity());
-				return true;
+				array[i] = array[i + 1];
 			}
-			return false;
+
+			array[size()] = null;
+
+			rangeCheckAndDecreaseSize(size(), capacity());
+			return true;
 		}
+		return false;
 	}
 
 	/**
@@ -728,7 +723,7 @@ public class SynchronizedArrayList<E>
 	 *             if ({@code c==null})
 	 * @throws ClassCastException
 	 */
-	public boolean removeAll(Collection<?> c) throws NullPointerException, ClassCastException
+	public synchronized boolean removeAll(Collection<?> c) throws NullPointerException, ClassCastException
 	{
 		if (c == null)
 		{
@@ -736,41 +731,38 @@ public class SynchronizedArrayList<E>
 			throw new NullPointerException(str);
 		}
 
-		synchronized (array)
+		boolean changed = false;
+		int size = size();
+
+		Set<Integer> indices = new HashSet<>();
+
+		for (int index = 0; index < size; index++)
 		{
-			boolean changed = false;
-			int size = size();
-
-			Set<Integer> indices = new HashSet<>();
-
-			for (int index = 0; index < size; index++)
+			if (!c.contains(array[index]))
 			{
-				if (!c.contains(array[index]))
+				indices.add(index);
+			} else
+			{
+				if (!changed)
 				{
-					indices.add(index);
-				} else
-				{
-					if (!changed)
-					{
-						changed = true;
-					}
-					counter -= 1;
+					changed = true;
 				}
+				counter -= 1;
 			}
-
-			@SuppressWarnings("unchecked")
-			E[] tempArr = (E[]) new Object[indices.size()];
-			Iterator<Integer> indIt = indices.iterator();
-			int travel = 0;
-
-			while (indIt.hasNext())
-			{
-				tempArr[travel] = array[indIt.next()];
-				travel++;
-			}
-			array = tempArr;
-			return changed;
 		}
+
+		@SuppressWarnings("unchecked")
+		E[] tempArr = (E[]) new Object[indices.size()];
+		Iterator<Integer> indIt = indices.iterator();
+		int travel = 0;
+
+		while (indIt.hasNext())
+		{
+			tempArr[travel] = array[indIt.next()];
+			travel++;
+		}
+		array = tempArr;
+		return changed;
 	}
 
 	/**
@@ -781,48 +773,45 @@ public class SynchronizedArrayList<E>
 	 *            Collection
 	 * @return return true if common element(s) found
 	 */
-	public boolean retainAll(Collection<?> c)
+	public synchronized boolean retainAll(Collection<?> c)
 	{
 		if (c == null)
 		{
 			String str = "Collection " + c + " cannot be null.";
 			throw new NullPointerException(str);
 		}
+		
+		boolean changed = false;
+		int size = size();
+		counter = 0;
 
-		synchronized (array)
+		Set<Integer> indices = new HashSet<>();
+
+		for (int index = 0; index < size; index++)
 		{
-			boolean changed = false;
-			int size = size();
-			counter = 0;
-
-			Set<Integer> indices = new HashSet<>();
-
-			for (int index = 0; index < size; index++)
+			if (c.contains(array[index]))
 			{
-				if (c.contains(array[index]))
+				indices.add(index);
+				if (!changed)
 				{
-					indices.add(index);
-					if (!changed)
-					{
-						changed = true;
-					}
-					counter++;
+					changed = true;
 				}
+				counter++;
 			}
-
-			@SuppressWarnings("unchecked")
-			E[] tempArr = (E[]) new Object[indices.size()];
-			Iterator<Integer> indIt = indices.iterator();
-			int travel = 0;
-
-			while (indIt.hasNext())
-			{
-				tempArr[travel] = array[indIt.next()];
-				travel++;
-			}
-			array = tempArr;
-			return changed;
 		}
+
+		@SuppressWarnings("unchecked")
+		E[] tempArr = (E[]) new Object[indices.size()];
+		Iterator<Integer> indIt = indices.iterator();
+		int travel = 0;
+
+		while (indIt.hasNext())
+		{
+			tempArr[travel] = array[indIt.next()];
+			travel++;
+		}
+		array = tempArr;
+		return changed;
 	}
 
 	/**
@@ -866,7 +855,7 @@ public class SynchronizedArrayList<E>
 	 * 
 	 * @return iterator over {@link SynchronizedArrayList}
 	 */
-	public Iterator<E> iterator()
+	public synchronized Iterator<E> iterator()
 	{
 		Iterator<E> it = new Iterator<E>()
 		{

@@ -1,24 +1,35 @@
-Sync
+SynchronizedArrayList	
 
-0% Scenario{vm=java, trial=0, benchmark=InstantiateAdd} 252874.76 ns; σ=29912.91 ns @ 10 trials
-50% Scenario{vm=java, trial=0, benchmark=InstantiateSet} 178520.26 ns; σ=1058.09 ns @ 3 trials
+0% Scenario{vm=java, trial=0, benchmark=InstantiateAdd} 268319.06 ns; σ=20844.91 ns @ 10 trials
+20% Scenario{vm=java, trial=0, benchmark=InstantiateSet} 225370.73 ns; σ=27962.78 ns @ 10 trials
+40% Scenario{vm=java, trial=0, benchmark=InstantiateRemove} 413581.67 ns; σ=46363.68 ns @ 10 trials
+60% Scenario{vm=java, trial=0, benchmark=InstantiateRemoveAndRetain} 265885.24 ns; σ=7727.18 ns @ 10 trials
+80% Scenario{vm=java, trial=0, benchmark=InstantiateLimits} 11926623.53 ns; σ=348396.44 ns @ 10 trials
 
-     benchmark  us linear runtime
-InstantiateAdd 253 ==============================
-InstantiateSet 179 =====================
+                 benchmark    us linear runtime
+            InstantiateAdd   268 =
+            InstantiateSet   225 =
+         InstantiateRemove   414 =
+InstantiateRemoveAndRetain   266 =
+         InstantiateLimits 11927 ==============================
 
 vm: java
 trial: 0
- 
-=============================================
- 
-Pre	
-0% Scenario{vm=java, trial=0, benchmark=InstantiateAdd} 245451.29 ns; σ=15489.67 ns @ 10 trials
-50% Scenario{vm=java, trial=0, benchmark=InstantiateSet} 242481.55 ns; σ=26278.97 ns @ 10 trials
 
-     benchmark  us linear runtime
-InstantiateAdd 245 ==============================
-InstantiateSet 242 =============================
+==========================================================================================
+
+ArrayList 
+
+0% Scenario{vm=java, trial=0, benchmark=InstantiateAdd} 256037.15 ns; σ=1055.36 ns @ 3 trials
+25% Scenario{vm=java, trial=0, benchmark=InstantiateSet} 190041.83 ns; σ=7752.42 ns @ 10 trials
+50% Scenario{vm=java, trial=0, benchmark=InstantiateRemove} 344774.59 ns; σ=51998.74 ns @ 10 trials
+75% Scenario{vm=java, trial=0, benchmark=InstantiateLimits} 13791921.90 ns; σ=571205.64 ns @ 10 trials
+
+        benchmark    us linear runtime
+   InstantiateAdd   256 =
+   InstantiateSet   190 =
+InstantiateRemove   345 =
+InstantiateLimits 13792 ==============================
 
 vm: java
 trial: 0

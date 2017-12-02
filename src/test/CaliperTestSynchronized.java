@@ -1,22 +1,20 @@
 package test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import com.google.caliper.Runner;
 import com.google.caliper.SimpleBenchmark;
 
+import main.PreSyncArrayList;
 import main.SynchronizedArrayList;
 
 public class CaliperTestSynchronized extends SimpleBenchmark
 {
+	private static final int MILLION = 1000000;
 	private SynchronizedArrayList<Point> array;
-	private static int DEFAULT_LEN = 5;
-	private static String str = "[[0.0, 0.0, 0.0], [1.0, 1.0, 1.0], [2.0, 2.0, 2.0], [3.0, 3.0, 3.0], [4.0, 4.0, 4.0]]";
-
+	private static int DEFAULT_LEN = 100;
+	
 	public void timeInstantiateAdd(int reps)
 	{
 		for (int i = 0; i < reps; i++)
@@ -117,7 +115,140 @@ public class CaliperTestSynchronized extends SimpleBenchmark
 			}
 		}
 	}
+	
+	public void timeInstantiateRemove(int reps)
+	{
+		for (int i = 0; i < reps; i++)
+		{
+			array = new SynchronizedArrayList<>();
+			for (int j = 0; j < DEFAULT_LEN; j++)
+			{
+				array.add(new Point(j, j, j));
+			}
+			
+			Thread thread = new Thread()
+			{
+				public void run()
+				{
+					while (!array.isEmpty())
+					{
+						array.remove(0);
+					}
+				}
+			};
+			
+			Thread thread2 = new Thread()
+			{
+				public void run()
+				{
+					for (int j = 0; j < DEFAULT_LEN; j++)
+					{
+						array.add(new Point(j, j, j));
+					}
+				}
+			};
+			
+			Thread thread3 = new Thread()
+			{
+				public void run()
+				{
+					for (int j = 0; j < DEFAULT_LEN; j++)
+					{
+						array.remove(new Point(j, j, j));
+					}
+				}
+			};
+			
+			try
+			{
+				thread.start();
+				thread.join();
+				
+				thread2.start();
+				thread2.join();
+				
+				thread3.start();
+				thread3.join();
+				
+			} catch (InterruptedException e)
+			{
+				e.printStackTrace();
+			}
+		}
+	}
 
+	public void timeInstantiateRemoveAndRetain(int reps)
+	{
+		for (int i = 0; i < reps; i++)
+		{
+			array = new SynchronizedArrayList<>();
+			for (int j = 0; j < DEFAULT_LEN; j++)
+			{
+				array.add(new Point(j, j, j));
+			}
+			
+			List<Point> list = new ArrayList<>();
+			for (int k = 0; k < DEFAULT_LEN; k++)
+			{
+				list.add(new Point(k, k, k));
+			}
+			
+			Thread thread = new Thread()
+			{
+				public void run()
+				{
+					array.removeAll(list);
+				}
+			};
+			
+			Thread thread2 = new Thread()
+			{
+				public void run()
+				{
+					array.retainAll(list);
+				}
+			};
+			
+			Thread thread3 = new Thread()
+			{
+				public void run()
+				{
+					for (int j = 0; j < DEFAULT_LEN; j++)
+					{
+						array.removeAll(list);
+					}
+				}
+			};
+			
+			try
+			{
+				thread.start();
+				thread2.start();
+				thread3.start();
+
+				thread.join();
+				thread2.join();
+				thread3.join();
+				
+			} catch (InterruptedException e)
+			{
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void timeInstantiateLimits(int reps)
+	{
+		for (int i = 0; i < reps; i++)
+		{
+			array = new SynchronizedArrayList<>();
+			for (int j = 0; j < MILLION; j++)
+			{
+				array.add(new Point(j, j, j));
+			}
+		}
+	}
+	
 	public static void main(String[] args)
 	{
 		Runner.main(CaliperTestSynchronized.class, args);
