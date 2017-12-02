@@ -1,30 +1,30 @@
 SynchronizedArrayList	
          
-			benchmark   					us		linear runtime
-			OverloadedAddCompare			252 		===
-			CompareSetMultiThreaded  	186 		==
-			CompareRemove  				351		=====
-			CompareRemoveAll...  		244 		===
-			SearchInLargeArray  			1924 	==============================
+							benchmark	us	linear runtime
+					OverloadedAddCompare	252	===
+				CompareSetMultiThreaded	186	==
+						CompareRemove	351	=====
+					CompareRemoveAll...	244	===
+					SearchInLargeArray	1924	==============================
 
 ==========================================================================================
 
 ArrayList 
 
-			benchmark   					us		linear runtime
-			OverloadedAddCompare			270 		===
-			CompareSetMultiThreaded  	225 		==
-			CompareRemove  				273		=====
-			CompareRemoveAll...  		235 		===
-			SearchInLargeArray  			2132 	=============================
+							benchmark	us	linear runtime
+					OverloadedAddCompare	270	===
+				CompareSetMultiThreaded	225	==
+						CompareRemove	273	=====
+					CompareRemoveAll...	235	===
+					SearchInLargeArray	2132	==============================
 			
 ==========================================================================================
 
 Vector
 
-			benchmark   					us		linear runtime
-			OverloadedAddCompare			257 		===
-			CompareSetMultiThreaded  	190 		==
-			CompareRemove  				329		=====
-			CompareRemoveAll...  		295 		===
-			SearchInLargeArray  			2140 	=============================
+										benchmark	us	linear runtime
+					OverloadedAddCompare	257	===
+				CompareSetMultiThreaded	190	==
+						CompareRemove	329	=====
+					CompareRemoveAll...	295	===
+					SearchInLargeArray	2140	==============================
