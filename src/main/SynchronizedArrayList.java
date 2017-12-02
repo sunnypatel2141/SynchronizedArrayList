@@ -1008,7 +1008,7 @@ public class SynchronizedArrayList<E>
 	private void resizeAndCopyContents(int newSize)
 	{
 		/**
-		 * Removed code to improve performance
+		 * Removed code to improve performance (Arrays.copyOf superior)
 		 */
 //		@SuppressWarnings("unchecked")
 //		E[] tempArr = (E[]) new Object[newSize];

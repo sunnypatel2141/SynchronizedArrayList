@@ -1,38 +1,29 @@
 SynchronizedArrayList	
-
-                 benchmark    us linear runtime
-            InstantiateAdd   339 =
-            InstantiateSet   237 =
-         InstantiateRemove   329 =
-InstantiateRemoveAndRetain   284 =
-         InstantiateLimits 14230 ==============================
-
-(Arrays.copyOf...)
-                 benchmark    us linear runtime
-            InstantiateAdd   290 =
-            InstantiateSet   219 =
-         InstantiateRemove   376 =
-InstantiateRemoveAndRetain   293 =
-         InstantiateLimits 12110 ==============================
+         
+               benchmark   us linear runtime
+            InstantiateAdd  252 ===
+            InstantiateSet  186 ==
+         InstantiateRemove  351 =====
+InstantiateRemoveAndRetain  244 ===
+ InstantiateLimitsAndIndex 1924 ==============================
 
 ==========================================================================================
 
 ArrayList 
 
-                 benchmark    us linear runtime
-            InstantiateAdd   258 =
-            InstantiateSet   225 =
-         InstantiateRemove   306 =
-InstantiateRemoveAndRetain   279 =
-         InstantiateLimits 14045 ==============================
+                 benchmark   us linear runtime
+            InstantiateAdd  270 ===
+            InstantiateSet  225 ===
+         InstantiateRemove  273 ===
+InstantiateRemoveAndRetain  235 ===
+ InstantiateLimitsAndIndex 2132 ==============================
 
 ==========================================================================================
 
 Vector
-
-              benchmark    us linear runtime
-			InstantiateAdd   328 = 
-			InstantiateSet   188 =
-         InstantiateRemove   324 =
-InstantiateRemoveAndRetain   239 =
-         InstantiateLimits 13441 ==============================
+	              benchmark   us linear runtime
+          	InstantiateAdd  257 ===
+            InstantiateSet  190 ==
+         InstantiateRemove  329 ====
+InstantiateRemoveAndRetain  295 ====
+ InstantiateLimitsAndIndex 2140 ==============================

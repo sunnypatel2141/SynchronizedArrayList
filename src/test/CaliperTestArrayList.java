@@ -2,36 +2,48 @@ package test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import com.google.caliper.Runner;
 import com.google.caliper.SimpleBenchmark;
 
 public class CaliperTestArrayList extends SimpleBenchmark
 {
-
-	private ArrayList<Point> array;
+	private static final int TEN_THOUSAND = 10000;
+	private ArrayList<Point> array = new ArrayList<Point>() {{
+	    add(new Point(0, 0, 0));
+	    add(new Point(1, 1, 1));
+	    add(new Point(2, 2, 2));
+	    add(new Point(3, 3, 3));
+	    add(new Point(4, 4, 4));
+	    add(new Point(5, 5, 5));
+	    add(new Point(6, 6, 6));
+	    add(new Point(7, 7, 7));
+	    add(new Point(8, 8, 8));
+	    add(new Point(9, 9, 9));
+	}};
+			
 	private static int DEFAULT_LEN = 100;
-	private static int MILLION = 1000000;
-//	private static String str = "[[0.0, 0.0, 0.0], [1.0, 1.0, 1.0], [2.0, 2.0, 2.0], [3.0, 3.0, 3.0], [4.0, 4.0, 4.0]]";
-
+	
 	public void timeInstantiateAdd(int reps)
 	{
 		for (int i = 0; i < reps; i++)
 		{
-			array = new ArrayList<>();
+			ArrayList<Point> arrayLocal = new ArrayList<>();
 
 			Thread thread = new Thread()
 			{
 				public void run()
 				{
-					array.add(new Point(0, 0, 0));
+					arrayLocal.add(new Point(0, 0, 0));
 				}
 			};
 			Thread thread2 = new Thread()
 			{
 				public void run()
 				{
-					array.add(0, new Point(1, 1, 1));
+
+					arrayLocal.add(0, new Point(1, 1, 1));
 				}
 			};
 			Thread thread3 = new Thread()
@@ -43,7 +55,7 @@ public class CaliperTestArrayList extends SimpleBenchmark
 					{
 						list.add(new Point(k, k, k));
 					}
-					array.addAll(list);
+					arrayLocal.addAll(list);
 				}
 			};
 
@@ -56,17 +68,22 @@ public class CaliperTestArrayList extends SimpleBenchmark
 				thread.join();
 				thread2.join();
 				thread3.join();
+
+//				for (int j = 0; j < DEFAULT_LEN; j++)
+//				{
+//					assertTrue(array.contains(new Point(j, j, j)));
+//				}
 			} catch (InterruptedException e)
 			{
 				e.printStackTrace();
 			}
 		}
 	}
-
+	
 	public void timeInstantiateSet(int reps)
 	{
 		for (int i = 0; i < reps; i++)
-		{
+		{		
 			array = new ArrayList<>();
 			for (int j = 0; j < DEFAULT_LEN; j++)
 			{
@@ -102,7 +119,6 @@ public class CaliperTestArrayList extends SimpleBenchmark
 				
 				thread.join();
 				thread2.join();
-				
 			} catch (InterruptedException e)
 			{
 				e.printStackTrace();
@@ -114,12 +130,6 @@ public class CaliperTestArrayList extends SimpleBenchmark
 	{
 		for (int i = 0; i < reps; i++)
 		{
-			array = new ArrayList<>();
-			for (int j = 0; j < DEFAULT_LEN; j++)
-			{
-				array.add(new Point(j, j, j));
-			}
-			
 			Thread thread = new Thread()
 			{
 				public void run()
@@ -170,17 +180,11 @@ public class CaliperTestArrayList extends SimpleBenchmark
 			}
 		}
 	}
-	
+
 	public void timeInstantiateRemoveAndRetain(int reps)
 	{
 		for (int i = 0; i < reps; i++)
-		{
-			array = new ArrayList<>();
-			for (int j = 0; j < DEFAULT_LEN; j++)
-			{
-				array.add(new Point(j, j, j));
-			}
-			
+		{	
 			List<Point> list = new ArrayList<>();
 			for (int k = 0; k < DEFAULT_LEN; k++)
 			{
@@ -231,14 +235,22 @@ public class CaliperTestArrayList extends SimpleBenchmark
 		}
 	}
 	
-	public void timeInstantiateLimits(int reps)
+	public void timeInstantiateLimitsAndIndex(int reps)
 	{
 		for (int i = 0; i < reps; i++)
 		{
 			array = new ArrayList<>();
-			for (int j = 0; j < MILLION; j++)
+			for (int j = 0; j < TEN_THOUSAND; j++)
 			{
 				array.add(new Point(j, j, j));
+			}
+			Random r = new Random();
+			for (int j = 0; j < DEFAULT_LEN; j++)
+			{
+				int val = r.nextInt(TEN_THOUSAND);
+				Point p = new Point(val, val, val);
+				array.indexOf(p);
+				array.lastIndexOf(p);
 			}
 		}
 	}
