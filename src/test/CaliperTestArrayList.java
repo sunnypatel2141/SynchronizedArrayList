@@ -171,6 +171,66 @@ public class CaliperTestArrayList extends SimpleBenchmark
 		}
 	}
 	
+	public void timeInstantiateRemoveAndRetain(int reps)
+	{
+		for (int i = 0; i < reps; i++)
+		{
+			array = new ArrayList<>();
+			for (int j = 0; j < DEFAULT_LEN; j++)
+			{
+				array.add(new Point(j, j, j));
+			}
+			
+			List<Point> list = new ArrayList<>();
+			for (int k = 0; k < DEFAULT_LEN; k++)
+			{
+				list.add(new Point(k, k, k));
+			}
+			
+			Thread thread = new Thread()
+			{
+				public void run()
+				{
+					array.removeAll(list);
+				}
+			};
+			
+			Thread thread2 = new Thread()
+			{
+				public void run()
+				{
+					array.retainAll(list);
+				}
+			};
+			
+			Thread thread3 = new Thread()
+			{
+				public void run()
+				{
+					for (int j = 0; j < DEFAULT_LEN; j++)
+					{
+						array.removeAll(list);
+					}
+				}
+			};
+			
+			try
+			{
+				thread.start();
+				thread2.start();
+				thread3.start();
+
+				thread.join();
+				thread2.join();
+				thread3.join();
+				
+			} catch (InterruptedException e)
+			{
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	public void timeInstantiateLimits(int reps)
 	{
 		for (int i = 0; i < reps; i++)

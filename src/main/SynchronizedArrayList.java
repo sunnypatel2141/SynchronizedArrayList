@@ -1003,23 +1003,23 @@ public class SynchronizedArrayList<E>
 	 * Not synchronized because each caller of this function is synchronized on
 	 * array object
 	 * 
-	 * @param newSize
-	 *            new array size
+	 * @param newSize new array size
 	 */
 	private void resizeAndCopyContents(int newSize)
 	{
 		/**
-		 * Suppress Warning makes sense as only elements of type E are added
+		 * Removed code to improve performance
 		 */
-		@SuppressWarnings("unchecked")
-		E[] tempArr = (E[]) new Object[newSize];
-
-		// traverse until end of smaller array
-		int len = array.length > newSize ? newSize : array.length;
-		for (int i = 0; i < len; i++)
-		{
-			tempArr[i] = array[i];
-		}
-		array = tempArr;
+//		@SuppressWarnings("unchecked")
+//		E[] tempArr = (E[]) new Object[newSize];
+//
+//		// traverse until end of smaller array
+//		int len = array.length > newSize ? newSize : array.length;
+//		for (int i = 0; i < len; i++)
+//		{
+//			tempArr[i] = array[i];
+//		}
+//		array = tempArr;
+		array = Arrays.copyOf(array, newSize);
 	}
 }

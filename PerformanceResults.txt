@@ -1,35 +1,38 @@
 SynchronizedArrayList	
 
-0% Scenario{vm=java, trial=0, benchmark=InstantiateAdd} 268319.06 ns; σ=20844.91 ns @ 10 trials
-20% Scenario{vm=java, trial=0, benchmark=InstantiateSet} 225370.73 ns; σ=27962.78 ns @ 10 trials
-40% Scenario{vm=java, trial=0, benchmark=InstantiateRemove} 413581.67 ns; σ=46363.68 ns @ 10 trials
-60% Scenario{vm=java, trial=0, benchmark=InstantiateRemoveAndRetain} 265885.24 ns; σ=7727.18 ns @ 10 trials
-80% Scenario{vm=java, trial=0, benchmark=InstantiateLimits} 11926623.53 ns; σ=348396.44 ns @ 10 trials
-
                  benchmark    us linear runtime
-            InstantiateAdd   268 =
-            InstantiateSet   225 =
-         InstantiateRemove   414 =
-InstantiateRemoveAndRetain   266 =
-         InstantiateLimits 11927 ==============================
+            InstantiateAdd   339 =
+            InstantiateSet   237 =
+         InstantiateRemove   329 =
+InstantiateRemoveAndRetain   284 =
+         InstantiateLimits 14230 ==============================
 
-vm: java
-trial: 0
+(Arrays.copyOf...)
+                 benchmark    us linear runtime
+            InstantiateAdd   290 =
+            InstantiateSet   219 =
+         InstantiateRemove   376 =
+InstantiateRemoveAndRetain   293 =
+         InstantiateLimits 12110 ==============================
 
 ==========================================================================================
 
 ArrayList 
 
-0% Scenario{vm=java, trial=0, benchmark=InstantiateAdd} 256037.15 ns; σ=1055.36 ns @ 3 trials
-25% Scenario{vm=java, trial=0, benchmark=InstantiateSet} 190041.83 ns; σ=7752.42 ns @ 10 trials
-50% Scenario{vm=java, trial=0, benchmark=InstantiateRemove} 344774.59 ns; σ=51998.74 ns @ 10 trials
-75% Scenario{vm=java, trial=0, benchmark=InstantiateLimits} 13791921.90 ns; σ=571205.64 ns @ 10 trials
+                 benchmark    us linear runtime
+            InstantiateAdd   258 =
+            InstantiateSet   225 =
+         InstantiateRemove   306 =
+InstantiateRemoveAndRetain   279 =
+         InstantiateLimits 14045 ==============================
 
-        benchmark    us linear runtime
-   InstantiateAdd   256 =
-   InstantiateSet   190 =
-InstantiateRemove   345 =
-InstantiateLimits 13792 ==============================
+==========================================================================================
 
-vm: java
-trial: 0
+Vector
+
+              benchmark    us linear runtime
+			InstantiateAdd   328 = 
+			InstantiateSet   188 =
+         InstantiateRemove   324 =
+InstantiateRemoveAndRetain   239 =
+         InstantiateLimits 13441 ==============================

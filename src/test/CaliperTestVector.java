@@ -2,22 +2,26 @@ package test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 import com.google.caliper.Runner;
 import com.google.caliper.SimpleBenchmark;
+
 import main.SynchronizedArrayList;
 
-public class CaliperTestSynchronized extends SimpleBenchmark
+public class CaliperTestVector extends SimpleBenchmark
 {
-	private static final int MILLION = 1000000;
-	private SynchronizedArrayList<Point> array;
+
+	private Vector<Point> array;
 	private static int DEFAULT_LEN = 100;
-	
+	private static int MILLION = 1000000;
+//	private static String str = "[[0.0, 0.0, 0.0], [1.0, 1.0, 1.0], [2.0, 2.0, 2.0], [3.0, 3.0, 3.0], [4.0, 4.0, 4.0]]";
+
 	public void timeInstantiateAdd(int reps)
 	{
 		for (int i = 0; i < reps; i++)
 		{
-			array = new SynchronizedArrayList<>();
+			array = new Vector<>();
 
 			Thread thread = new Thread()
 			{
@@ -30,7 +34,6 @@ public class CaliperTestSynchronized extends SimpleBenchmark
 			{
 				public void run()
 				{
-
 					array.add(0, new Point(1, 1, 1));
 				}
 			};
@@ -56,23 +59,18 @@ public class CaliperTestSynchronized extends SimpleBenchmark
 				thread.join();
 				thread2.join();
 				thread3.join();
-
-//				for (int j = 0; j < DEFAULT_LEN; j++)
-//				{
-//					assertTrue(array.contains(new Point(j, j, j)));
-//				}
 			} catch (InterruptedException e)
 			{
 				e.printStackTrace();
 			}
 		}
 	}
-	
+
 	public void timeInstantiateSet(int reps)
 	{
 		for (int i = 0; i < reps; i++)
 		{
-			array = new SynchronizedArrayList<>();
+			array = new Vector<>();
 			for (int j = 0; j < DEFAULT_LEN; j++)
 			{
 				array.add(new Point(j, j, j));
@@ -107,6 +105,7 @@ public class CaliperTestSynchronized extends SimpleBenchmark
 				
 				thread.join();
 				thread2.join();
+				
 			} catch (InterruptedException e)
 			{
 				e.printStackTrace();
@@ -118,7 +117,7 @@ public class CaliperTestSynchronized extends SimpleBenchmark
 	{
 		for (int i = 0; i < reps; i++)
 		{
-			array = new SynchronizedArrayList<>();
+			array = new Vector<>();
 			for (int j = 0; j < DEFAULT_LEN; j++)
 			{
 				array.add(new Point(j, j, j));
@@ -174,12 +173,12 @@ public class CaliperTestSynchronized extends SimpleBenchmark
 			}
 		}
 	}
-
+	
 	public void timeInstantiateRemoveAndRetain(int reps)
 	{
 		for (int i = 0; i < reps; i++)
 		{
-			array = new SynchronizedArrayList<>();
+			array = new Vector<>();
 			for (int j = 0; j < DEFAULT_LEN; j++)
 			{
 				array.add(new Point(j, j, j));
@@ -239,7 +238,7 @@ public class CaliperTestSynchronized extends SimpleBenchmark
 	{
 		for (int i = 0; i < reps; i++)
 		{
-			array = new SynchronizedArrayList<>();
+			array = new Vector<>();
 			for (int j = 0; j < MILLION; j++)
 			{
 				array.add(new Point(j, j, j));
@@ -249,6 +248,6 @@ public class CaliperTestSynchronized extends SimpleBenchmark
 	
 	public static void main(String[] args)
 	{
-		Runner.main(CaliperTestSynchronized.class, args);
+		Runner.main(CaliperTestArrayList.class, args);
 	}
 }
