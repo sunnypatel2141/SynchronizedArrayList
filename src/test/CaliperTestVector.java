@@ -31,7 +31,7 @@ public class CaliperTestVector extends SimpleBenchmark
 			
 	private static int DEFAULT_LEN = 100;
 	
-	public void timeInstantiateAdd(int reps)
+	public void timeOverloadedAddCompare(int reps)
 	{
 		for (int i = 0; i < reps; i++)
 		{
@@ -86,7 +86,7 @@ public class CaliperTestVector extends SimpleBenchmark
 		}
 	}
 	
-	public void timeInstantiateSet(int reps)
+	public void timeCompareSetMultiThreaded(int reps)
 	{
 		for (int i = 0; i < reps; i++)
 		{		
@@ -132,7 +132,7 @@ public class CaliperTestVector extends SimpleBenchmark
 		}
 	}
 	
-	public void timeInstantiateRemove(int reps)
+	public void timeCompareRemove(int reps)
 	{
 		for (int i = 0; i < reps; i++)
 		{
@@ -187,7 +187,7 @@ public class CaliperTestVector extends SimpleBenchmark
 		}
 	}
 
-	public void timeInstantiateRemoveAndRetain(int reps)
+	public void timeCompareRemoveAllAndRetainAllMultiThreaded(int reps)
 	{
 		for (int i = 0; i < reps; i++)
 		{	
@@ -241,7 +241,7 @@ public class CaliperTestVector extends SimpleBenchmark
 		}
 	}
 	
-	public void timeInstantiateLimitsAndIndex(int reps)
+	public void timeSearchInLargeArray(int reps)
 	{
 		for (int i = 0; i < reps; i++)
 		{
