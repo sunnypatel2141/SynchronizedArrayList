@@ -1,4 +1,4 @@
-package test;
+package Caliper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,12 +6,18 @@ import java.util.Random;
 
 import com.google.caliper.Runner;
 import com.google.caliper.SimpleBenchmark;
-import main.SynchronizedArrayList;
 
-public class CaliperTestSynchronized extends SimpleBenchmark
+import test.Point;
+
+public class CaliperTestArrayList extends SimpleBenchmark
 {
 	private static final int TEN_THOUSAND = 10000;
-	private SynchronizedArrayList<Point> array = new SynchronizedArrayList<Point>() {{
+	private ArrayList<Point> array = new ArrayList<Point>() {/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+	{
 	    add(new Point(0, 0, 0));
 	    add(new Point(1, 1, 1));
 	    add(new Point(2, 2, 2));
@@ -30,7 +36,7 @@ public class CaliperTestSynchronized extends SimpleBenchmark
 	{
 		for (int i = 0; i < reps; i++)
 		{
-			SynchronizedArrayList<Point> arrayLocal = new SynchronizedArrayList<>();
+			ArrayList<Point> arrayLocal = new ArrayList<>();
 
 			Thread thread = new Thread()
 			{
@@ -85,7 +91,7 @@ public class CaliperTestSynchronized extends SimpleBenchmark
 	{
 		for (int i = 0; i < reps; i++)
 		{		
-			array = new SynchronizedArrayList<>();
+			array = new ArrayList<>();
 			for (int j = 0; j < DEFAULT_LEN; j++)
 			{
 				array.add(new Point(j, j, j));
@@ -240,7 +246,7 @@ public class CaliperTestSynchronized extends SimpleBenchmark
 	{
 		for (int i = 0; i < reps; i++)
 		{
-			array = new SynchronizedArrayList<>();
+			array = new ArrayList<>();
 			for (int j = 0; j < TEN_THOUSAND; j++)
 			{
 				array.add(new Point(j, j, j));
@@ -269,6 +275,6 @@ public class CaliperTestSynchronized extends SimpleBenchmark
 	
 	public static void main(String[] args)
 	{
-		Runner.main(CaliperTestSynchronized.class, args);
+		Runner.main(CaliperTestArrayList.class, args);
 	}
 }

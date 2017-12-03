@@ -1,22 +1,18 @@
-package test;
+package Caliper;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.Vector;
 
 import com.google.caliper.Runner;
 import com.google.caliper.SimpleBenchmark;
+import main.SynchronizedArrayList;
+import test.Point;
 
-public class CaliperTestVector extends SimpleBenchmark
+public class CaliperTestSynchronized extends SimpleBenchmark
 {
 	private static final int TEN_THOUSAND = 10000;
-	private Vector<Point> array = new Vector<Point>() {/**
-		 * 
-		 */
-		private static final long serialVersionUID = 1L;
-
-	{
+	private SynchronizedArrayList<Point> array = new SynchronizedArrayList<Point>() {{
 	    add(new Point(0, 0, 0));
 	    add(new Point(1, 1, 1));
 	    add(new Point(2, 2, 2));
@@ -35,7 +31,7 @@ public class CaliperTestVector extends SimpleBenchmark
 	{
 		for (int i = 0; i < reps; i++)
 		{
-			Vector<Point> arrayLocal = new Vector<>();
+			SynchronizedArrayList<Point> arrayLocal = new SynchronizedArrayList<>();
 
 			Thread thread = new Thread()
 			{
@@ -90,7 +86,7 @@ public class CaliperTestVector extends SimpleBenchmark
 	{
 		for (int i = 0; i < reps; i++)
 		{		
-			array = new Vector<>();
+			array = new SynchronizedArrayList<>();
 			for (int j = 0; j < DEFAULT_LEN; j++)
 			{
 				array.add(new Point(j, j, j));
@@ -245,7 +241,7 @@ public class CaliperTestVector extends SimpleBenchmark
 	{
 		for (int i = 0; i < reps; i++)
 		{
-			array = new Vector<>();
+			array = new SynchronizedArrayList<>();
 			for (int j = 0; j < TEN_THOUSAND; j++)
 			{
 				array.add(new Point(j, j, j));
@@ -265,15 +261,20 @@ public class CaliperTestVector extends SimpleBenchmark
 	{
 		for (int i = 0; i < reps; i++)
 		{
-			for (int k = 0; k < 10; k++)
+			for (int k = 0; k < 1000; k++)
 			{
-				array.subList(0, k);
+				array.add(new Point(k, k, k));
+			}
+			
+			for (int k = 400; k < 500; k++)
+			{
+				array.subList(k, k * 2);
 			}
 		}
 	}
 	
 	public static void main(String[] args)
 	{
-		Runner.main(CaliperTestVector.class, args);
+		Runner.main(CaliperTestSynchronized.class, args);
 	}
 }

@@ -1,4 +1,4 @@
-package test;
+package JUnit;
 
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.*;

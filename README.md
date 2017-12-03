@@ -1,6 +1,6 @@
 # Synchronized ArrayList
 
-This is an implementation of ArrayList data structure with synchronized operations.  
+SynchronizedArrayList implements a growable array of objects. Like arrays, it contains components that can be accessed using an integer index. The size of of a SynchronizedArrayList can grow or shrink as objects are added or removed after instantiation.  
 
 PerformanceResults.txt file compares runtime of each method as function of time.  
 In summary:

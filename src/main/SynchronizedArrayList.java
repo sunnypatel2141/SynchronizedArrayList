@@ -162,7 +162,7 @@ public class SynchronizedArrayList<E>
 	}
 
 	/**
-	 * Instantiate {@link SynchronizedArrayList} with @param num
+	 * Instantiate {@link SynchronizedArrayList} with {@code} num
 	 * 
 	 * @param num size of {@link SynchronizedArrayList}
 	 * @throws IllegalArgumentException if ({@code num < 0 || num > Integer.MAX_VALUE - 1})
@@ -218,10 +218,9 @@ public class SynchronizedArrayList<E>
 	}
 
 	/**
-	 * Resizes array to @param minCapacity, if it's greater than capacity()
+	 * Resizes array to {@code} minCapacity, if it's greater than capacity()
 	 * 
-	 * @param minCapacity
-	 *            new array length, if greater than capacity()
+	 * @param minCapacity new array length, if greater than capacity()
 	 */
 	public synchronized void ensureCapacity(int minCapacity)
 	{
@@ -254,8 +253,7 @@ public class SynchronizedArrayList<E>
 	/**
 	 * Returns true of {@link SynchronizedArrayList} contains Object o
 	 * 
-	 * @param o
-	 *            Object to search for
+	 * @param o Object to search for
 	 * @return true if {@link SynchronizedArrayList} contains o, false otherwise
 	 */
 	public synchronized boolean contains(Object o)
@@ -636,8 +634,8 @@ public class SynchronizedArrayList<E>
 	}
 
 	/**
-	 * Removes from {@link SynchronizedArrayList} elements starting at @param
-	 * fromIndex to @param toIndex, inclusive
+	 * Removes from {@link SynchronizedArrayList} elements starting at {@code}
+	 * fromIndex to {@code} toIndex, inclusive
 	 * 
 	 * @param fromIndex starting point of remove range
 	 * @param toIndex end point of removal
@@ -797,7 +795,7 @@ public class SynchronizedArrayList<E>
 
 	/**
 	 * Returns a ListIterator over {@link SynchronizedArrayList} starting at
-	 * index @param index
+	 * index {@code} index
 	 *
 	 * @param index starting point of traversal
 	 * @return list iterator
@@ -864,7 +862,7 @@ public class SynchronizedArrayList<E>
 
 	/**
 	 * Returns a subist view of the {@link SynchronizedArrayList} object ranging
-	 * from @param fromIndex to @param toIndex
+	 * from {@code} fromIndex to {@code} toIndex
 	 * 
 	 * @param fromIndex starting index of sublist
 	 * @param toIndex end index of sublist, inclusive
@@ -967,7 +965,7 @@ public class SynchronizedArrayList<E>
 	}
 
 	/**
-	 * Resized the array to @param size
+	 * Resized the array to {@code} size
 	 * 
 	 * Not synchronized because each caller of this function is synchronized on
 	 * array object
